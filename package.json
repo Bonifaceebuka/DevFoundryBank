@@ -11,7 +11,12 @@
   "scripts": {
     "dev": "nodemon",
     "lint": "eslint -c ./.eslintrc.js ./src --format stylish --fix --ext .ts",
-    "start": "yarn lint && yarn dev"
+    "start": "yarn lint && yarn dev",
+    "typeorm": "ts-node ./node_modules/typeorm/cli.js",
+    "typeorm:ds": "npm run typeorm -- -d ./src/config/postgres",
+    "migration:create": "npm run typeorm migration:create",
+    "migration:generate": "npm run typeorm:ds -- migration:generate",
+    "migration:run": "npm run typeorm:ds -- migration:run"
   },
   "dependencies": {
     "@types/node": "^22.13.1",

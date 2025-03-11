@@ -15,7 +15,8 @@ export const dataSource = new DataSource({
     database: pg.database,
     port: +pg.port,
     entities: ["src/api/models/postgres/**/*.ts"],
-    synchronize: true,
+    migrations: ["src/api/migrations/*.ts"],
+    synchronize: false,
     logging: true,
     multipleStatements: true,
     ssl: (!env.isLocal && !env.isTest) ? { rejectUnauthorized: false } : false
