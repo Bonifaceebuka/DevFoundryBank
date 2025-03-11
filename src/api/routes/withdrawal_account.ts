@@ -16,5 +16,8 @@ withdrawalAccountRouter.get("/", appMiddleware.userAuthMiddleware, async (req: R
 withdrawalAccountRouter.delete("/:id", appMiddleware.userAuthMiddleware, async (req: Request, res: Response) => {
     withdrawalAccountController.deleteWithdrawalAccount(req, res)
 });
+withdrawalAccountRouter.get("/:id", appMiddleware.userAuthMiddleware, async (req: Request, res: Response) => {
+    withdrawalAccountController.showWithdrawalAccountDetails(req, res)
+});
 
 export default withdrawalAccountRouter;

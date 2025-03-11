@@ -44,4 +44,18 @@ export default class WithdrawalAccountController {
             throw new Error("Something went wrong");
         }
     }
+
+    public async showWithdrawalAccountDetails(req: Request, res: Response) {
+        try {
+            const account_id = req.params.id as number
+            const user_id = req.authId;
+            const withdrwalAccount = await this.withdrawalAccountService.getWithdrawalAccount(user_id, account_id);
+            if (withdrwalAccount.isSuccess) {
+                return res.status(200).json({ data: withdrwalAccount?.data })
+            }
+            return res.status(403).json({ message: withdrwalAccount.message })
+        } catch (error) {
+            throw new Error("Something went wrong");
+        }
+    }
 }

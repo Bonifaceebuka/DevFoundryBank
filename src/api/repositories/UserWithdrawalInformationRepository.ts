@@ -38,5 +38,10 @@ export const UserWithdrawalInformationRepository = dataSource.getRepository(User
     async deleteUserWithdrawalAccount(user_id: string, accountId: number) {
         const account = await this.findById(accountId);
         return this.remove([account]);
+    },
+
+    async getUserWithdrawalAccount(user_id: string, accountId: number) {
+        const account = await this.findById(accountId);
+        return account;
     }
 });

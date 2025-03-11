@@ -15,13 +15,13 @@ export default class WithdrawalAccountService {
         await UserWithdrawalInformationRepository.updateUserAccount(user_id, id, req);
     }
 
-    public async deleteWithdrawalAccount(user_id: string, id: number): Promise<{ isSuccess: boolean, message ?: string }>{
+    public async deleteWithdrawalAccount(user_id: string, id: number): Promise<{ isSuccess: boolean, message?: string, data?: UserWithdrawalInformation }>{
         const accountAlreadyExists = await UserWithdrawalInformationRepository.findById(id);
         if (accountAlreadyExists && accountAlreadyExists?.userId == user_id) {
             await UserWithdrawalInformationRepository.deleteUserWithdrawalAccount(user_id, id);
             return {
                 isSuccess: true,
-                message: 'Withdrawal account successfully deleted!',
+                data: accountAlreadyExists,
             };
         }
         if (accountAlreadyExists && accountAlreadyExists?.userId !== user_id) {
@@ -35,6 +35,29 @@ export default class WithdrawalAccountService {
                 isSuccess: false,
                 message: 'Account not found!',
             }; 
+        }
+    }
+
+    public async getWithdrawalAccount(user_id: string, id: number): Promise<{ isSuccess: boolean, message?: string, data?: UserWithdrawalInformation }> {
+        const withdrawalAccountDetails = await UserWithdrawalInformationRepository.findById(id);
+        if (withdrawalAccountDetails && withdrawalAccountDetails?.userId == user_id) {
+            await UserWithdrawalInformationRepository.getUserWithdrawalAccount(user_id, id);
+            return {
+                isSuccess: true,
+                data: withdrawalAccountDetails,
+            };
+        }
+        if (withdrawalAccountDetails && withdrawalAccountDetails?.userId !== user_id) {
+            return {
+                isSuccess: false,
+                message: 'Unauthorized request!',
+            };
+        }
+        else {
+            return {
+                isSuccess: false,
+                message: 'Account not found!',
+            };
         }
     }
 
