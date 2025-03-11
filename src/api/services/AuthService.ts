@@ -13,13 +13,15 @@ export default class AuthService {
         private logger: Logger,
     ) { }
 
-    public async registerUser(req: CreateUserRequest): Promise<{ isExists: boolean, user: User, otp?: string }> {
+    public async registerUser(req: CreateUserRequest): Promise<{ isExists: boolean, user: User, otp?: string, message?: string }> {
         const { email, password } = req;
 
         const existingUser = await UserRepository.findByEmail(email);
-        // this.logger.log({existingUser})
+        let message = null;
         if (existingUser) {
-            return { isExists: true, user: existingUser };
+            message = "Email is already registered";
+            this.logger.info(message)
+            return { isExists: true, user: existingUser, message };
         }
 
         const hashedPassword = await UtilityService.hashString(password);
@@ -28,44 +30,62 @@ export default class AuthService {
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         otp; // send otp to user
         // todo:: calculate OTP expriation time and save
-        return { isExists: false, user: createdUser, otp };
+        
+        message = "User registration was successful";
+        this.logger.info(message)
+        return { isExists: false, user: createdUser, otp, message };
     }
 
     public async loginUser(req: AuthenticateUserRequest): Promise<{ isSuccess: boolean, message?: string, user?: User, token?: string }> {
         const { email, password } = req;
 
         const existingUser = await UserRepository.findByEmail(email);
+        let message = null;
         if (!existingUser) {
-            return { isSuccess: false, message: "Invalid email or password" };
+            message = "Invalid email or password";
+            this.logger.info(message)
+            return { isSuccess: false, message};
         }
 
         const isPasswordCheckOK = await UtilityService.compareHash(password, existingUser.password);
         if (!isPasswordCheckOK) {
-            return { isSuccess: false, message: "Invalid email or password" };
+            message = "Invalid email or password";
+            this.logger.info(message)
+            return { isSuccess: false, message };
         }
 
         if (!existingUser.isValidated) {
             // resend Otp
-            return { isSuccess: false, message: "User account not validated. Please check your email for further instructions" };
+            message = "User account not validated. Please check your email for further instructions";
+            this.logger.info(message)
+            return { isSuccess: false, message };
         }
 
         if (!existingUser.isActive) {
-            return { isSuccess: false, message: "User account is inactive. Please contact support" };
+            message = "User account is inactive. Please contact support";
+            this.logger.info(message)
+            return { isSuccess: false, message };
         }
 
         if (!existingUser.isEnabled) {
-            return { isSuccess: false, message: "User account is disabled. Please contact support" };
+            message = "User account is disabled. Please contact support";
+            this.logger.info(message)
+            return { isSuccess: false, message };
         }
 
         if (existingUser.isDeleted) {
-            return { isSuccess: false, message: "User account has been deleted. Please contact support if you want to restore your account" };
+            message = "User account has been deleted. Please contact support if you want to restore your account";
+            this.logger.info(message)
+            return { isSuccess: false, message};
         }
         
         const user = UtilityService.sanitizeUserObject(existingUser);
-
+        message = "User object was sanitized";
+        this.logger.debug(message)
         // generate JWT
         const jwtDetails = UtilityService.generateJWT(user.email, user.id);
-
+        message = "User JWT was generated";
+        this.logger.debug(message)
         return { isSuccess: true, user, token: jwtDetails };
     }
 
@@ -73,8 +93,9 @@ export default class AuthService {
         const { email, otp } = req;
 
         const user = await UserRepository.findByOtp(otp, email);
+        let message = "Could not validate user as user does not exist";
         if (!user) {
-            this.logger.error("Could not validate user as user does not exist", { email, otp });
+            this.logger.error(message, { email, otp });
             return false;
         }
 

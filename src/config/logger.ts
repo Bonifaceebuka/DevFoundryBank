@@ -1,9 +1,9 @@
 import { config, configure, format, transports } from "winston";
-
 import { env } from "../env";
+import DailyRotateFile from "winston-daily-rotate-file";
+import { hostname } from "os";
 
-
-const { combine, colorize, simple, errors } = format;
+const { combine, colorize, errors, timestamp, printf } = format;
 
 
 export const logLoader = () => {
@@ -13,10 +13,33 @@ export const logLoader = () => {
         format: combine(
             errors({ stack: true }),
             colorize({ all: true }),
-            simple()
+            timestamp({ format: "YYYY-MM-DD HH:mm:ss"}),
+            printf(info =>{
+                return `${info.timestamp} [${info.level}] [${info.context ? info.context : info.stack}]${info.message ||JSON.stringify({
+                            ...info,
+                            timestamp: undefined,
+                            context: undefined,
+                            stack: undefined,
+                            level: undefined,
+                        })}`
+            })
+            
         ),
         transports: [
             new transports.Console(),
+            new DailyRotateFile({
+                dirname: `logs/${hostname}/combined`,
+                filename: "combined",
+                extension: ".log",
+                level: env.isProduction ? "info" : "debug"
+            }),
+            new DailyRotateFile({
+                dirname: `logs/${hostname}/error`,
+                filename: "errors",
+                extension: ".log",
+                level: "error",
+                format: combine(errors({stack: !env.isProduction}))
+            })
         ]
     });
 };

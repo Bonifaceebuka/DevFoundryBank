@@ -1,11 +1,13 @@
-import { Service } from 'typedi';
+import { Inject, Service } from 'typedi';
 import AuthService from "../services/AuthService";
 import { Request, Response } from "express";
+import { Logger } from '../../lib/logger';
 
 @Service()
 export default class AuthController {
     constructor(
-        private readonly authService: AuthService
+       @Inject(()=> Logger) private readonly logger: Logger,
+        private readonly authService: AuthService,
     ){}
     /**
      * register
@@ -14,10 +16,14 @@ export default class AuthController {
     try {
             const newUser = await this.authService.registerUser(req.body);
             if (newUser.isExists) {
-                return res.status(400).json({ message: "User email is already registered" })
+                this.logger.info(newUser?.message)
+                return res.status(400).json({ message: newUser?.message })
             }
+
+            this.logger.info(newUser?.message)
             return res.status(201).json({data: newUser})
-        } catch (error) {
+        } catch (error: any) {
+            this.logger.error(error.message)
             throw new Error("Something went wrong");
         }
     }
@@ -26,10 +32,12 @@ export default class AuthController {
         try {
             const authUser = await this.authService.loginUser(req.body);
             if (!authUser?.isSuccess) {
+                this.logger.info(authUser?.message,{email: req.body.email})
                 return res.status(400).json({ message: authUser?.message })
             }
             return res.status(200).json({ data: authUser })
-        } catch (error) {
+        } catch (error: any) {
+            this.logger.error(error.message)
             throw new Error("Something went wrong");
         }
     }
@@ -37,11 +45,16 @@ export default class AuthController {
     public async verifyEmail(req: Request, res: Response) {
         try {
             const user = await this.authService.validateEmail(req.body);
+            let message = null;
             if (user) {
-                return res.status(200).json({ message: "User email verification was successful" })
+                message = "User email verification was successful";
+                this.logger.info(message)
+                return res.status(200).json({ message })
             }
-            return res.status(400).json({ message: "User email verification failed" })
-        } catch (error) {
+            message = "User email verification failed";
+            return res.status(400).json({ message })
+        } catch (error: any) {
+            this.logger.error(error.message)
             throw new Error("Something went wrong");
         }
     }

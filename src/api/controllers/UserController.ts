@@ -1,22 +1,29 @@
 import UserService from "../services/UserService";
-import { Service } from 'typedi';
+import { Inject, Service } from 'typedi';
 import { Request, Response } from "express";
+import { Logger } from "../../lib/logger";
 
 @Service()
 export default class UserController {
       constructor(
-            private readonly userService: UserService
+            private readonly userService: UserService,
+            @Inject(()=> Logger) private readonly logger: Logger,
         ){}
 
     public async fetchProfile(req: Request, res: Response) {
         try {
             const authUserId = req.authId
             const newUser = await this.userService.getUserInformation(authUserId);
+            let message = "User account was not found!";
+            this.logger.info(message)
             if (!newUser) {
-                return res.status(404).json({ message: "User account was not found!" })
+                return res.status(404).json({ message })
             }
+            message = "User account info was fetched!";
+            this.logger.info(message)
             return res.status(200).json({data: newUser})
-        } catch (error) {
+        } catch (error: any) {
+            this.logger.error(error.message)
             throw new Error("Something went wrong");
         }
     }
@@ -26,11 +33,15 @@ export default class UserController {
             const pin = req.body.pin;
             const user_id = req.authId;
             const createPin = await this.userService.setPin(user_id, pin);
+            let message = createPin.message;
             if (createPin.isSuccess) {
-                return res.status(200).json({ message: createPin.message })
+                this.logger.info(message)
+                return res.status(200).json({ message})
             }
-            return res.status(400).json({ message: createPin.message })
-        } catch (error) {
+            this.logger.info(message)
+            return res.status(400).json({ message})
+        } catch (error: any) {
+            this.logger.error(error.message)
             throw new Error("Something went wrong");
         }
     }
@@ -39,10 +50,13 @@ export default class UserController {
         try {
             const updatedUser = await this.userService.update(req.authId, req.body);
             if (!updatedUser?.isSuccess) {
+                this.logger.info(updatedUser?.message)
                 return res.status(400).json({ message: updatedUser?.message })
             }
+            this.logger.info(updatedUser?.message)
             return res.status(200).json({ data: updatedUser })
-        } catch (error) {
+        } catch (error: any) {
+            this.logger.error(error.message)
             throw new Error("Something went wrong");
         }
     }
