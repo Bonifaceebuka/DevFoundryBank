@@ -16,7 +16,8 @@
     "typeorm:ds": "npm run typeorm -- -d ./src/config/postgres",
     "migration:create": "npm run typeorm migration:create",
     "migration:generate": "npm run typeorm:ds -- migration:generate",
-    "migration:run": "npm run typeorm:ds -- migration:run"
+    "migration:run": "npm run typeorm:ds -- migration:run",
+    "migration:revert": "npm run typeorm:ds -- migration:revert"
   },
   "dependencies": {
     "@types/node": "^22.13.1",
@@ -47,6 +48,7 @@
     "typeorm": "^0.3.20",
     "typescript": "^5.7.3",
     "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0",
     "yarn": "1.22.22"
   },
   "devDependencies": {

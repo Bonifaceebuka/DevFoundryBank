@@ -5,7 +5,7 @@ import { env } from "./env";
 import { Logger } from "./lib/logger"
 
 
-const log = new Logger();
+const logger = new Logger();
 
 (async () => {
     const { app: appInfo } = env;
@@ -15,7 +15,7 @@ const log = new Logger();
     await expressConfig(app);
     
     app.listen(appInfo.port, () => {
-        log.info(`${appInfo.displayName}, v${appInfo.version} is started on port ${appInfo.port}`);
-        console.log(`${appInfo.displayName}, v${appInfo.version} is started on port ${appInfo.port}`);
+        logger.info(`${appInfo.displayName}, v${appInfo.version} is started on port ${appInfo.port}`);
+        logger.info(`${appInfo.displayName}, v${appInfo.version} is started on port ${appInfo.port}`);
     });
 })();
