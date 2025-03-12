@@ -5,7 +5,6 @@ import { hostname } from "os";
 
 const { combine, colorize, errors, timestamp, printf } = format;
 
-
 export const logLoader = () => {
     configure({
         levels: config.syslog.levels,
@@ -15,13 +14,10 @@ export const logLoader = () => {
             colorize({ all: true }),
             timestamp({ format: "YYYY-MM-DD HH:mm:ss"}),
             printf(info =>{
-                return `${info.timestamp} [${info.level}] [${info.context ? info.context : info.stack}]${info.message ||JSON.stringify({
-                            ...info,
-                            timestamp: undefined,
-                            context: undefined,
-                            stack: undefined,
-                            level: undefined,
-                        })}`
+                const { level, timestamp, message, context, stack, activity_type, metadata } = info;
+                console.log({message})
+                const extraData = metadata ? (typeof metadata === "object" ? JSON.stringify(metadata, null, 2) : metadata) : null;
+                return `${timestamp} [${level}] [${context || stack}] ${message || null} ${activity_type ? `[Activity Type: ${activity_type}]` : `[Activity Type: ${null}]`} ${extraData ? `[Metadata: ${extraData}]` : `[Metadata: ${null}]`}`;
             })
             
         ),

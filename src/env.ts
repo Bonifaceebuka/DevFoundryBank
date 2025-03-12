@@ -31,6 +31,7 @@ export const env = {
         name: (pkg as any).name,
         displayName: (pkg as any).displayName || (pkg as any).name,
         version: (pkg as any).version,
+        url: getOsEnv("APP_URL"),
         port: normalizePort(process.env.PORT || undefined)
     },
     log: {

@@ -3,28 +3,57 @@ import winston from "winston";
 
 import { env } from "../../env";
 
+type LogDataFormat = {
+    activity_type: string;
+    message: string;
+    metadata: object;
+};
 
 @Service()
 export class Logger {
-    public debug(message: string, ...args: any[]): void {
-        this.log("debug", message, args);
+    private readonly context: string;
+
+    constructor(context?: string) {
+        this.context = context || "Root";
     }
 
-    public info(message: string, ...args: any[]): void {
-        this.log("info", message, args);
+    public debug(logData: string | LogDataFormat, ...args: any[]): void {
+        this.log("debug", logData, args);
     }
 
-    public warn(message: string, ...args: any[]): void {
-        this.log("warn", message, args);
+    public info(logData: string | LogDataFormat, ...args: any[]): void {
+        this.log("info", logData, args);
     }
 
-    public error(message: string, ...args: any[]): void {
-        this.log("error", message, args);
+    public warn(logData: string | LogDataFormat, ...args: any[]): void {
+        this.log("warn", logData, args);
     }
 
-    public log(level: string, message: string, args: any[] = []): void {
+    public error(logData: string | LogDataFormat, ...args: any[]): void {
+        this.log("error", logData, args);
+    }
+
+    public log(level: string, logData: string | LogDataFormat, args: any): void {
+         let logBody = null;
+
+        if (typeof logData == "string") {
+            logBody={
+                message: `${this.formatScope()} ${logData}`,
+                context: this.context,
+                metadata: args.length ? JSON.stringify(args) : null
+            }
+        }
+        else{
+            logBody = {
+                message: `${this.formatScope()} ${logData.message}`,
+                context: this.context,
+                activity_type: logData.activity_type,
+                metadata: logData.metadata,
+            }
+        }
+
         if (winston) {
-            winston[level](`${this.formatScope()} ${message}`, ...args);
+            winston.log(level, logBody.message, logBody);
         }
     }
 
