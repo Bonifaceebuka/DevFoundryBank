@@ -10,6 +10,7 @@
   "private": false,
   "scripts": {
     "dev": "nodemon",
+    "build": "nodemon",
     "lint": "eslint -c ./.eslintrc.js ./src --format stylish --fix --ext .ts",
     "start": "yarn lint && yarn dev",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js",
