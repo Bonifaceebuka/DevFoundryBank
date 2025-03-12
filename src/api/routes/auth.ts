@@ -8,8 +8,9 @@ const authController = Container.get(AuthController)
  * @swagger
  * /register:
  *   post:
- *     description: Welcome to swagger-jsdoc!
- *     responses:
+ *     description: User registration endpoint
+ *     requestBody:
+ *      required:true
  *       200:
  *         description: Returns a mysterious string.
  */
