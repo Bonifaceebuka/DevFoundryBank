@@ -9,9 +9,11 @@ import AuthenticateUserOtp from "../models/payload/requests/AuthenticateUserOtp"
 
 @Service()
 export default class AuthService {
+    private readonly logger: Logger;
     constructor(
-        private logger: Logger,
-    ) { }
+    ) { 
+        this.logger = new Logger(AuthService.name);
+    }
 
     public async registerUser(req: CreateUserRequest): Promise<{ isExists: boolean, user: User, otp?: string, message?: string }> {
         const { email, password } = req;
@@ -20,7 +22,6 @@ export default class AuthService {
         let message = null;
         if (existingUser) {
             message = "Email is already registered";
-            this.logger.info(message)
             return { isExists: true, user: existingUser, message };
         }
 
@@ -32,7 +33,6 @@ export default class AuthService {
         // todo:: calculate OTP expriation time and save
         
         message = "User registration was successful";
-        this.logger.info(message)
         return { isExists: false, user: createdUser, otp, message };
     }
 
@@ -43,39 +43,33 @@ export default class AuthService {
         let message = null;
         if (!existingUser) {
             message = "Invalid email or password";
-            this.logger.info(message)
             return { isSuccess: false, message};
         }
 
         const isPasswordCheckOK = await UtilityService.compareHash(password, existingUser.password);
         if (!isPasswordCheckOK) {
             message = "Invalid email or password";
-            this.logger.info(message)
             return { isSuccess: false, message };
         }
 
         if (!existingUser.isValidated) {
             // resend Otp
             message = "User account not validated. Please check your email for further instructions";
-            this.logger.info(message)
             return { isSuccess: false, message };
         }
 
         if (!existingUser.isActive) {
             message = "User account is inactive. Please contact support";
-            this.logger.info(message)
             return { isSuccess: false, message };
         }
 
         if (!existingUser.isEnabled) {
             message = "User account is disabled. Please contact support";
-            this.logger.info(message)
             return { isSuccess: false, message };
         }
 
         if (existingUser.isDeleted) {
             message = "User account has been deleted. Please contact support if you want to restore your account";
-            this.logger.info(message)
             return { isSuccess: false, message};
         }
         
@@ -86,16 +80,16 @@ export default class AuthService {
         const jwtDetails = UtilityService.generateJWT(user.email, user.id);
         message = "User JWT was generated";
         this.logger.debug(message)
-        return { isSuccess: true, user, token: jwtDetails };
+        return { isSuccess: true, user, token: jwtDetails, message:"Login was successful" };
     }
 
     public async validateEmail(req: AuthenticateUserOtp): Promise<boolean> {
         const { email, otp } = req;
 
         const user = await UserRepository.findByOtp(otp, email);
-        let message = "Could not validate user as user does not exist";
+        // let message = "Could not validate user as user does not exist";
         if (!user) {
-            this.logger.error(message, { email, otp });
+            // this.logger.error(message, { email, otp });
             return false;
         }
 

@@ -9,7 +9,7 @@ export default class AppMiddleware{
     constructor(
         private readonly logger: Logger
     ){
-
+        
     }
     public async userAuthMiddleware(req: Request, res: Response, next: NextFunction) {
         const { headers } = req
@@ -33,7 +33,7 @@ export default class AppMiddleware{
 
                     req.authEmail = decoded.jwtData.email;
                     req.authId = decoded.jwtData.user_id;
-                    logger.debug("User is authenticated!", { user: decoded.jwtData.email })
+                    // logger.debug("User is authenticated!", { user: decoded.jwtData.email })
                     next();
                 }
             )

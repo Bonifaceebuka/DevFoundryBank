@@ -44,6 +44,7 @@ export default class WithdrawalAccountService {
             await UserWithdrawalInformationRepository.getUserWithdrawalAccount(user_id, id);
             return {
                 isSuccess: true,
+                message: "User withdrawal account details fetched successfully",
                 data: withdrawalAccountDetails,
             };
         }
