@@ -1,18 +1,21 @@
 import compression from "compression";
 import cors from "cors";
-import { Application, json, Request, Response, urlencoded } from "express";
+import { Application, json, 
+    // Request, Response, 
+    urlencoded } from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 
-import { env } from "../env";
+// import { env } from "../env";
 
 import { logLoader } from "./logger";
 import { mongoDBLoader } from "./mongodb";
 import { postgresLoader } from "./postgres";
 import { redisLoader } from "./redis";
-import routes from "../api/routes";
+// import routes from "../api/routes";
+import { RegisterRoutes } from "../api/routes/routes";
 
-const { app: appInfo } = env;
+// const { app: appInfo } = env;
 
 const corsOptions = {
     origin(origin, callback) {
@@ -47,10 +50,10 @@ const expressConfig = async (app: Application): Promise<void> => {
     await mongoDBLoader();
     await redisLoader();
 
-    app.use('/api',routes);
+    // app.use('/api',routes);
 
-    app.get("/", (req:Request, res:Response) => res.send(`${appInfo.displayName} - v${appInfo.version}`));
-    
+    // app.get("/", (req:Request, res:Response) => res.send(`${appInfo.displayName} - v${appInfo.version}`));
+    RegisterRoutes(app);
 };
 
 export default expressConfig;
