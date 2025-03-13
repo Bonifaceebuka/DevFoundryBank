@@ -6,6 +6,7 @@ import UtilityService from "./UtilityService";
 import AuthenticateUserRequest from "../models/payload/requests/AuthenticateUserRequest";
 import User from "../models/postgres/User";
 import AuthenticateUserOtp from "../models/payload/requests/AuthenticateUserOtp";
+import { EmailVerificationResponseDTO, RegisterUserResponseDTO } from "../dtos/AuthDTO";
 
 @Service()
 export default class AuthService {
@@ -15,14 +16,14 @@ export default class AuthService {
         this.logger = new Logger(AuthService.name);
     }
 
-    public async registerUser(req: CreateUserRequest): Promise<{ isExists: boolean, user: User, otp?: string, message?: string }> {
+    public async registerUser(req: CreateUserRequest): Promise<RegisterUserResponseDTO> {
         const { email, password } = req;
 
         const existingUser = await UserRepository.findByEmail(email);
         let message = null;
         if (existingUser) {
             message = "Email is already registered";
-            return { isExists: true, user: existingUser, message };
+            return { itExists: true, user: existingUser, message };
         }
 
         const hashedPassword = await UtilityService.hashString(password);
@@ -33,7 +34,7 @@ export default class AuthService {
         // todo:: calculate OTP expriation time and save
         
         message = "User registration was successful";
-        return { isExists: false, user: createdUser, otp, message };
+        return { itExists: false, user: createdUser, message };
     }
 
     public async loginUser(req: AuthenticateUserRequest): Promise<{ isSuccess: boolean, message?: string, user?: User, token?: string }> {
@@ -83,14 +84,16 @@ export default class AuthService {
         return { isSuccess: true, user, token: jwtDetails, message:"Login was successful" };
     }
 
-    public async validateEmail(req: AuthenticateUserOtp): Promise<boolean> {
+    public async validateEmail(req: AuthenticateUserOtp): Promise<EmailVerificationResponseDTO> {
         const { email, otp } = req;
 
         const user = await UserRepository.findByOtp(otp, email);
         // let message = "Could not validate user as user does not exist";
         if (!user) {
             // this.logger.error(message, { email, otp });
-            return false;
+            return {
+                isSuccess: false
+            };
         }
 
         // check otp storage to validate sent otp
@@ -103,7 +106,9 @@ export default class AuthService {
 
         await UserRepository.updateByUser(user, { isActive: true, isEnabled: true, isValidated: true });
 
-        return true;
+        return {
+            isSuccess: true
+        };
     }
 
 }

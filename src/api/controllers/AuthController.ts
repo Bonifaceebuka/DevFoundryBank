@@ -2,23 +2,32 @@ import { Inject, Service } from 'typedi';
 import AuthService from "../services/AuthService";
 import { Request, Response } from "express";
 import { Logger } from '../../lib/logger';
+import { Tags, Route, Controller, Post, Body, Example, Put } from 'tsoa';
+import { EmailVerificationDTO, LoginUserDTO, LoginUserResponseDTO, RegisterUserDTO, RegisterUserResponseDTO } from '../dtos/AuthDTO';
 
+@Tags("Auth")
+@Route("auth")
 @Service()
-export default class AuthController {
+export class AuthController extends Controller {
     private readonly logger: Logger;
     constructor(
        @Inject(()=> Logger) logger: Logger,
         private readonly authService: AuthService,
     ){
+        super()
         this.logger = new Logger(AuthController.name);
     }
-    /**
-     * register
-     */
-    public async register(req: Request, res: Response) {
+
+    @Post("/register")
+    @Example<RegisterUserResponseDTO>({
+        itExists: true,
+        user: null,
+        message: "User registration was successful",
+    })
+    public async register(@Body() req: RegisterUserDTO): Promise<RegisterUserResponseDTO> {
     try {
-            const newUser = await this.authService.registerUser(req.body);
-            if (newUser.isExists) {
+            const newUser = await this.authService.registerUser(req);
+            if (newUser.itExists) {
                 this.logger.info({
                     activity_type: "User registration",
                     message: newUser?.message,
@@ -28,7 +37,11 @@ export default class AuthController {
                         }
                     }
                 });
-                return res.status(400).json({ message: newUser?.message })
+                this.setStatus(400)
+                return {
+                     itExists: newUser.itExists,
+                     user: newUser.user,
+                     message: newUser?.message }
             }
 
             this.logger.info({
@@ -40,14 +53,19 @@ export default class AuthController {
                     }
                 }
             });
-            return res.status(201).json({data: newUser})
+            this.setStatus(201)
+            return {
+                itExists: newUser.itExists,
+                user: newUser.user,
+                message: newUser?.message
+            }
         } catch (error: any) {
             this.logger.error({
                 activity_type: "User registration",
                 message: error.message,
                 metadata: {
                     user: {
-                        email: req.body?.email
+                        email: req?.email
                     }
                 }
             });
@@ -55,29 +73,50 @@ export default class AuthController {
         }
     }
 
-    public async login(req: Request, res: Response) {
+    @Post("/login")
+    @Example<LoginUserResponseDTO>({
+        isSuccess: true,
+        user: null,
+        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+        message: "User registration was successful",
+    })
+    public async login(@Body() req: LoginUserDTO): Promise<LoginUserResponseDTO> {
+        const{ email } = req;
         try {
-            const authUser = await this.authService.loginUser(req.body);
+            const authUser = await this.authService.loginUser(req);
+            const { message, token, user } = authUser
             this.logger.info({
                 activity_type: "User login",
-                message: authUser?.message,
+                message,
                 metadata: {
                     user: {
-                        email: authUser.user.email
+                        email
                     }
                 }
             });
             if (!authUser?.isSuccess) {
-                return res.status(400).json({ message: authUser?.message })
+                this.setStatus(400)
+                return { 
+                    isSuccess: false,
+                    token: null,
+                    user: null,
+                    message
+                }
             }
-            return res.status(200).json({ data: authUser })
+            this.setStatus(200)
+                return {
+                    isSuccess: true,
+                    token: token,
+                    user: user,
+                    message
+                }
         } catch (error: any) {
             this.logger.error({
                 activity_type: "User registration",
                 message: error.message,
                 metadata: {
                     user: {
-                        email: req.body?.email
+                        email
                     }
                 }
             });
@@ -85,32 +124,49 @@ export default class AuthController {
         }
     }
 
-    public async verifyEmail(req: Request, res: Response) {
+
+    @Put("/email/verification")
+    @Example<LoginUserResponseDTO>({
+        isSuccess: true,
+    })
+
+    public async verifyEmail(@Body() req: EmailVerificationDTO): Promise<LoginUserResponseDTO>{
+        const { email } = req;
+
         try {
-            const user = await this.authService.validateEmail(req.body);
+            const user = await this.authService.validateEmail(req);
             let message = null;
-            if (user) {
+            if (user.isSuccess) {
                 message = "User email verification was successful";
                 this.logger.info({
                     activity_type: "User login",
                     message,
                     metadata: {
                         user: {
-                            email: req.email
+                            email
                         }
                     }
                 });
-                return res.status(200).json({ message })
+
+                this.setStatus(200)
+                return {
+                    isSuccess: user.isSuccess,
+                    message
+                };
             }
             message = "User email verification failed";
-            return res.status(400).json({ message })
+            this.setStatus(400)
+            return {
+                isSuccess: user.isSuccess,
+                message
+            };
         } catch (error: any) {
             this.logger.error({
                 activity_type: "User registration",
                 message: error.message,
                 metadata: {
                     user: {
-                        email: req.body?.email
+                        email
                     }
                 }
             });
