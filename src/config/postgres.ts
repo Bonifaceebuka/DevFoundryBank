@@ -11,7 +11,7 @@ export const dataSource = new DataSource({
     username: pg.user,
     password: pg.pass,
     database: pg.database,
-    entities: [__dirname + "/../models/**/*.entity{.ts,.js}"],
+    entities: ["src/api/models/postgres/**/*{.ts,.js}"],
     migrations: [__dirname + "/../migrations/*{.ts,.js}"],
     synchronize: false,
     logging: true,
