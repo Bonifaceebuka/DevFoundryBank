@@ -12,7 +12,7 @@ export class AuthUserDataDTO {
     authId!: string;
 }
 
-export class RegisterUserDTO extends CreateUserRequest { }
+export class RegisterUserDTO extends AuthenticateUserRequest { }
 
 export class RegisterUserResponseDTO { 
     @IsString()
