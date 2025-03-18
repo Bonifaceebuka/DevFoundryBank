@@ -14,6 +14,7 @@ import { postgresLoader } from "./postgres";
 import { redisLoader } from "./redis";
 // import routes from "../api/routes";
 import { RegisterRoutes } from "../api/routes/routes";
+import { errorHandlerMiddlware } from "src/api/middlewares/errohandlerMiddleware";
 
 // const { app: appInfo } = env;
 
@@ -54,6 +55,7 @@ const expressConfig = async (app: Application): Promise<void> => {
 
     // app.get("/", (req:Request, res:Response) => res.send(`${appInfo.displayName} - v${appInfo.version}`));
     RegisterRoutes(app);
+    // app.use(errorHandlerMiddlware)
 };
 
 export default expressConfig;

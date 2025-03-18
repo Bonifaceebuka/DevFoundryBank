@@ -23,53 +23,12 @@ const expressAuthenticationRecasted = expressAuthentication as (req: ExRequest, 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-    "Currency": {
-        "dataType": "refEnum",
-        "enums": ["NGN"],
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UserWithdrawalInformation": {
+    "CustomApiResponse": {
         "dataType": "refObject",
         "properties": {
-            "id": {"dataType":"double"},
-            "userId": {"dataType":"string","required":true},
-            "currency": {"ref":"Currency"},
-            "bankCode": {"dataType":"string","required":true},
-            "bankName": {"dataType":"string","required":true},
-            "accountNumber": {"dataType":"string","required":true},
-            "accountName": {"dataType":"string","required":true},
-            "createdAt": {"dataType":"string"},
-            "lastUpdatedAt": {"dataType":"datetime"},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "CreateWithdrawalAccountResponseDTO": {
-        "dataType": "refObject",
-        "properties": {
-            "isSuccess": {"dataType":"boolean","required":true},
-            "message": {"dataType":"string"},
-            "account": {"dataType":"union","subSchemas":[{"ref":"UserWithdrawalInformation"},{"dataType":"enum","enums":[null]}],"required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "FetchOneAccountResponseDTO": {
-        "dataType": "refObject",
-        "properties": {
-            "account": {"ref":"UserWithdrawalInformation"},
-            "message": {"dataType":"string"},
-            "isSuccess": {"dataType":"boolean","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ListUserAccountsResponseDTO": {
-        "dataType": "refObject",
-        "properties": {
-            "accounts": {"dataType":"union","subSchemas":[{"dataType":"array","array":{"dataType":"refObject","ref":"UserWithdrawalInformation"}},{"dataType":"enum","enums":[null]}]},
-            "message": {"dataType":"string"},
-            "isSuccess": {"dataType":"boolean","required":true},
+            "message": {"dataType":"string","required":true},
+            "data": {"dataType":"any"},
+            "status_code": {"dataType":"double","required":true},
         },
         "additionalProperties": false,
     },
@@ -122,16 +81,6 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UpdateProfileResponseDTO": {
-        "dataType": "refObject",
-        "properties": {
-            "isSuccess": {"dataType":"boolean","required":true},
-            "message": {"dataType":"string"},
-            "user": {"dataType":"union","subSchemas":[{"ref":"User"},{"dataType":"enum","enums":[null]}]},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "PasswordResetResponseDTO": {
         "dataType": "refObject",
         "properties": {
@@ -158,37 +107,11 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "RegisterUserResponseDTO": {
-        "dataType": "refObject",
-        "properties": {
-            "itExists": {"dataType":"boolean","required":true},
-            "user": {"dataType":"union","subSchemas":[{"ref":"User"},{"dataType":"undefined"}]},
-            "message": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"undefined"}]},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "RegisterUserDTO": {
         "dataType": "refObject",
         "properties": {
-            "firstName": {"dataType":"string","required":true},
-            "lastName": {"dataType":"string","required":true},
             "email": {"dataType":"string","required":true},
             "password": {"dataType":"string","required":true},
-            "address": {"dataType":"string","required":true},
-            "phoneNumber": {"dataType":"string","required":true},
-            "stateLgaId": {"dataType":"double","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "LoginUserResponseDTO": {
-        "dataType": "refObject",
-        "properties": {
-            "isSuccess": {"dataType":"boolean","required":true},
-            "user": {"dataType":"union","subSchemas":[{"ref":"User"},{"dataType":"enum","enums":[null]}]},
-            "token": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"undefined"},{"dataType":"enum","enums":[null]}]},
-            "message": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -377,7 +300,7 @@ export function RegisterRoutes(app: Router) {
         const argsUserController_fetchProfile: Record<string, TsoaRoute.ParameterSchema> = {
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.get('/user',
+        app.get('/users',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(UserController)),
             ...(fetchMiddlewares<RequestHandler>(UserController.prototype.fetchProfile)),
@@ -413,7 +336,7 @@ export function RegisterRoutes(app: Router) {
         const argsUserController_updateProfile: Record<string, TsoaRoute.ParameterSchema> = {
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.put('/user',
+        app.put('/users',
             authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(UserController)),
             ...(fetchMiddlewares<RequestHandler>(UserController.prototype.updateProfile)),

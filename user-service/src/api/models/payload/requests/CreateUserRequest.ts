@@ -3,10 +3,10 @@ import { IsEmail, IsNumber, IsString, IsStrongPassword, Min } from "class-valida
 
 export default class CreateUserRequest {
     @IsString({ message: "First name is required" })
-        firstName!: string;
+        firstName?: string;
 
     @IsString({ message: "Last name is required" })
-        lastName!: string;
+        lastName?: string;
 
     @IsString({ message: "Email is required" })
     @IsEmail({}, { message: "Email must be a valid email address" })
@@ -16,12 +16,12 @@ export default class CreateUserRequest {
         password!: string;
 
     @IsString({ message: "Address is required" })
-        address!: string;
+        address?: string;
 
     @IsString({ message: "Phone Number is required" })
-        phoneNumber!: string;
+        phoneNumber?: string;
 
     @IsNumber({}, { message: "State/LGA selection is not valid" })
     @Min(1, { message: "State/LGA selection is not valid" })
-        stateLgaId!: number;
+        stateLgaId?: number;
 }
