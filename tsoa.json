@@ -10,12 +10,15 @@
         "basePath": "/",
         "specFileBaseName": "swagger",
         "securityDefinitions": {
-            "jwt": {
-                "type": "apiKey",
-                "in": "header",
-                "name": "Authorization"
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
             }
-        }
+        },
+        "schemes": ["http"],
+        "servers":["localhost:2025"],
+        "security": [{"BearerAuth": []}]
     },
     "routes": {
         "routesDir": "src/api/routes",
