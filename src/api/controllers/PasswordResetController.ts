@@ -3,6 +3,9 @@ import PasswordResetService from "../services/PasswordResetService";
 import { Inject, Service } from "typedi";
 import { Controller, Route, Body, Post, Example, Response, SuccessResponse, Tags, Put, Path } from "tsoa";
 import { PasswordResetResponseDTO, PasswordResetRequestDTO, SetNewPasswordRequestDTO } from "../dtos/PasswordResetDTO";
+import { MESSAGES } from "../constants/messages";
+import { CustomApiResponse, errorResponse, serverErrorResponse, successResponse } from "../errors/errorHandler";
+import { ACTIVITY_TYPES } from "../constants/activity_types";
 
 @Route("password/reset")
 @Tags("Password Reset")
@@ -21,13 +24,13 @@ export class PasswordResetController extends Controller {
         email: "boniface@developersfoundry.com"
     })
     public async performPasswordResetRequest(@Body() passwordResetRequest: PasswordResetRequestDTO)
-    : Promise<PasswordResetResponseDTO> 
+    : Promise<CustomApiResponse> 
     {
         const { email } = passwordResetRequest; 
         try {
             const sentRequest = await this.passwordResetService.requestPasswordReset(passwordResetRequest);
                 this.logger.info({
-                    activity_type: "Request for password reset",
+                    activity_type: ACTIVITY_TYPES.USER.PASSWORD_RESET.REQUEST,
                     message: sentRequest.message,
                     metadata: {
                         user: {
@@ -36,12 +39,15 @@ export class PasswordResetController extends Controller {
                     }
                 });
                 this.setStatus(201);
-                return {
-                    ...sentRequest
+                if (sentRequest.isSuccess) {
+                    return successResponse(sentRequest.message as string)
                 }
+
+                this.setStatus(400);
+                return errorResponse(sentRequest.message as string)
             } catch (error: any) {
                 this.logger.error({
-                    activity_type: "Request for password reset",
+                    activity_type: ACTIVITY_TYPES.USER.PASSWORD_RESET.REQUEST,
                     message: error.message,
                     metadata: {
                         user: {
@@ -49,35 +55,35 @@ export class PasswordResetController extends Controller {
                         }
                     }
                 });
-                throw new Error("Something went wrong");
+                return serverErrorResponse(MESSAGES.COMMON.INTERNAL_SERVER_ERROR);
             }
         }
 
     @Put("/")
-    @Example<PasswordResetRequestDTO>({
-        email: "boniface@developersfoundry.com"
-    })
     public async setNewPassword(
         @Body() setNewPassword: SetNewPasswordRequestDTO)
-        : Promise<PasswordResetResponseDTO> {
+        : Promise<CustomApiResponse> {
         try {
             const sentRequest = await this.passwordResetService.setNewPassword(setNewPassword);
             this.logger.info({
-                activity_type: "Request for password reset",
+                activity_type: ACTIVITY_TYPES.USER.PASSWORD_RESET.NEW_PASSWORD,
                 message: sentRequest?.message,
                 metadata: {}
             });
-            this.setStatus(201);
-            return {
-                ...sentRequest
+            this.setStatus(200);
+            if (sentRequest.isSuccess) {
+                return successResponse(sentRequest.message as string)
             }
+
+            this.setStatus(400);
+            return errorResponse(sentRequest.message as string)
         } catch (error: any) {
             this.logger.error({
-                activity_type: "Request for password reset",
+                activity_type: ACTIVITY_TYPES.USER.PASSWORD_RESET.NEW_PASSWORD,
                 message: error.message,
                 metadata: {}
             });
-            throw new Error("Something went wrong");
+            return serverErrorResponse(MESSAGES.COMMON.INTERNAL_SERVER_ERROR);
         }
     }
 }

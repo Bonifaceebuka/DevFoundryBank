@@ -1,13 +1,17 @@
+import { CustomApiResponse, serverErrorResponse } from './../errors/errorHandler';
 import UserService from "../services/UserService";
 import { Inject, Service } from 'typedi';
 import { Logger } from "../../lib/logger";
 import { Example, Get, Request, Route, Security, Tags, Controller, Put } from "tsoa";
 import { FetchProfileResponseDTO, UpdateProfileResponseDTO } from "../dtos/UserDTO";
 import { CreatePinDTO } from "../dtos/UserPinDTO";
+import { errorResponse, successResponse } from "../errors/errorHandler";
+import { MESSAGES } from "../constants/messages";
+import { ACTIVITY_TYPES } from "../constants/activity_types";
 
 @Service()
 @Tags("User Profile")
-@Route("user")
+@Route("users")
 export class UserController extends Controller {
     private readonly logger: Logger
       constructor(
@@ -19,50 +23,40 @@ export class UserController extends Controller {
         }
 
     @Get("/")
-    @Example<FetchProfileResponseDTO>({
-        user: null,
-        message: "User profile was fetched successfully",
-    })
     @Security("jwt")
     public async fetchProfile(@Request() req: any): Promise<FetchProfileResponseDTO> {
         try {
             const authUserId = req.authId
-            const newUser = await this.userService.getUserInformation(authUserId);
-            let message = "User account was not found!";
+            const fetchedUser = await this.userService.getUserInformation(authUserId);
+            let message = MESSAGES.USER.NOT_FOUND;
             this.logger.info({
-                    activity_type: "Fetch user profile",
+                    activity_type: ACTIVITY_TYPES.USER_PROFILE,
                     message,
                     metadata: {
                         user: {
-                            email: newUser?.email
+                            email: fetchedUser?.email
                         }
                     }
                 });
-            if (!newUser) {
+            if (!fetchedUser) {
                 this.setStatus(404)
-                return {
-                    user: null,
-                    message
-                 }
+                return errorResponse(message,null,404)
             }
-            message = "User account info was fetched!";
+            message = MESSAGES.USER.USER_ACCOUNT_FETCHED;
             this.logger.info({
-                    activity_type: "Fetch user profile",
+                activity_type: ACTIVITY_TYPES.USER_PROFILE,
                     message,
                     metadata: {
                         user: {
-                            email: newUser.email
+                            email: fetchedUser.email
                         }
                     }
                 });
             this.setStatus(200)
-                return {
-                    user: newUser,
-                    message
-                }
+            return successResponse(message, fetchedUser)
         } catch (error: any) {
             this.logger.error({
-                activity_type: "Fetch user profile",
+                activity_type: ACTIVITY_TYPES.USER_PROFILE,
                 message: error.message,
                 metadata: {
                     user: {
@@ -70,14 +64,10 @@ export class UserController extends Controller {
                     }
                 }
             });
-            throw new Error("Something went wrong");
+            return serverErrorResponse(MESSAGES.COMMON.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @Example<CreatePinDTO>({
-        user_id: 1,
-        pin: "97776",
-    })
     @Security("jwt")
     public async createNewPin(@Request() req: any) {
         try {
@@ -88,52 +78,41 @@ export class UserController extends Controller {
 
             if (createPin.isSuccess) {
                 this.logger.info({
-                    activity_type: "Create new transaction PIN",
+                    activity_type: ACTIVITY_TYPES.TRANSACTION_PIN.CREATION,
                     message: message,
                     metadata: {}
                 });
-                this.setStatus(200)
-                return { 
-                    isSuccess,
-                    message
-                }
+                this.setStatus(201)
+                return successResponse(message as string,null, 201)
             }
             this.logger.info({
-                    activity_type: "Create new transaction PIN",
+                    activity_type: ACTIVITY_TYPES.TRANSACTION_PIN.CREATION,
                     message: createPin.message,
                     metadata: {
                         user: {}
                     }
                 });
             this.setStatus(400)
-            return {
-                isSuccess,
-                message
-            }
+            return errorResponse(message as string)
         } catch (error: any) {
             this.logger.error({
-                activity_type: "Create new transaction PIN",
+                activity_type: ACTIVITY_TYPES.TRANSACTION_PIN.CREATION,
                 message: error.message,
                 metadata: {}
             });
-            throw new Error("Something went wrong");
+            return serverErrorResponse(MESSAGES.COMMON.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Put("/")
-    @Example<UpdateProfileResponseDTO>({
-        user: null,
-        isSuccess: true,
-        message: "User profile was updated successfully",
-    })
     @Security("jwt")
-    public async updateProfile(@Request() req: any): Promise<UpdateProfileResponseDTO> {
+    public async updateProfile(@Request() req: any): Promise<CustomApiResponse> {
         try {
             const updatedUser = await this.userService.update(req.authId, req.body);
             const { message, user, isSuccess } = updatedUser;
             if (!updatedUser?.isSuccess) {
                 this.logger.info({
-                    activity_type: "Update user profile",
+                    activity_type: ACTIVITY_TYPES.USER.PROFILE_UPDATE,
                     message,
                     metadata: {
                         user: {
@@ -142,14 +121,10 @@ export class UserController extends Controller {
                     }
                 });
                 this.setStatus(400)
-                return {
-                    user,
-                    isSuccess,
-                    message
-                }
+                return errorResponse(message as string, user)
             }
             this.logger.info({
-                    activity_type: "Update user profile",
+                    activity_type: ACTIVITY_TYPES.USER.PROFILE_UPDATE,
                     message: updatedUser.message,
                     metadata: {
                         user: {
@@ -158,18 +133,14 @@ export class UserController extends Controller {
                     }
                 });
             this.setStatus(200)
-                return {
-                    user,
-                    isSuccess,
-                    message
-                }
+            return successResponse(message as string, user)
         } catch (error: any) {
             this.logger.error({
-                activity_type: "Update User profile",
+                activity_type: ACTIVITY_TYPES.USER.PROFILE_UPDATE,
                 message: error.message,
                 metadata: {}
             });
-            throw new Error("Something went wrong");
+            return serverErrorResponse(MESSAGES.COMMON.INTERNAL_SERVER_ERROR);
         }
     }
 }
