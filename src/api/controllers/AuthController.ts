@@ -21,7 +21,6 @@ export class AuthController extends Controller {
     @Post("/register")
     @Example<RegisterUserResponseDTO>({
         itExists: true,
-        user: null,
         message: "User registration was successful",
     })
     public async register(@Body() req: RegisterUserDTO): Promise<RegisterUserResponseDTO> {
@@ -33,7 +32,7 @@ export class AuthController extends Controller {
                     message: newUser?.message,
                     metadata: {
                         user: {
-                            email: newUser.user.email
+                            email: newUser?.user?.email
                         }
                     }
                 });
@@ -49,7 +48,7 @@ export class AuthController extends Controller {
                 message: newUser?.message,
                 metadata: {
                     user: {
-                        email: newUser.user.email
+                        email: newUser?.user?.email
                     }
                 }
             });
@@ -76,7 +75,6 @@ export class AuthController extends Controller {
     @Post("/login")
     @Example<LoginUserResponseDTO>({
         isSuccess: true,
-        user: null,
         token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
         message: "User registration was successful",
     })

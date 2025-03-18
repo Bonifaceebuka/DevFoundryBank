@@ -9,10 +9,10 @@ export default class StateLGA {
 
     @Column()
     @Index()
-        state: string;
+        state!: string;
 
     @Column()
-        lga: string;
+        lga!: string;
 
     @CreateDateColumn()
         createdAt?: string;

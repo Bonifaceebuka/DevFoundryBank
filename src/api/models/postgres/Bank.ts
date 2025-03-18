@@ -11,11 +11,11 @@ export default class Bank {
 
     @Column()
     @Index()
-        code: string;
+        code!: string;
 
     @Column()
     @Index()
-        name: string;
+        name!: string;
 
     @Column({
         type: "enum",

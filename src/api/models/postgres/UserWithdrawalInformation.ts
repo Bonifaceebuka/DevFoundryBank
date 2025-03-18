@@ -11,7 +11,7 @@ export default class UserWithdrawalInformation {
     
     @Column()
     @Index()
-        userId: string;
+        userId!: string;
         
     @Column({
         type: "enum",
@@ -22,16 +22,16 @@ export default class UserWithdrawalInformation {
         currency?: Currency;
 
     @Column()
-        bankCode: string;
+        bankCode!: string;
 
     @Column()
-        bankName: string;
+        bankName!: string;
 
     @Column()
-        accountNumber: string;
+        accountNumber!: string;
 
     @Column()
-        accountName: string;
+        accountName!: string;
 
     @CreateDateColumn()
         createdAt?: string;

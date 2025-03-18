@@ -1,19 +1,30 @@
 import UserService from "../services/UserService";
 import { Inject, Service } from 'typedi';
-import { Request, Response } from "express";
 import { Logger } from "../../lib/logger";
+import { Example, Get, Request, Route, Security, Tags, Controller, Put } from "tsoa";
+import { FetchProfileResponseDTO, UpdateProfileResponseDTO } from "../dtos/UserDTO";
+import { CreatePinDTO } from "../dtos/UserPinDTO";
 
 @Service()
-export default class UserController {
+@Tags("User Profile")
+@Route("user")
+export class UserController extends Controller {
     private readonly logger: Logger
       constructor(
             private readonly userService: UserService,
             @Inject(()=> Logger) logger: Logger,
         ){
+          super()
           this.logger = new Logger(UserController.name);
         }
 
-    public async fetchProfile(req: Request, res: Response) {
+    @Get("/")
+    @Example<FetchProfileResponseDTO>({
+        user: null,
+        message: "User profile was fetched successfully",
+    })
+    @Security("jwt")
+    public async fetchProfile(@Request() req: any): Promise<FetchProfileResponseDTO> {
         try {
             const authUserId = req.authId
             const newUser = await this.userService.getUserInformation(authUserId);
@@ -23,12 +34,16 @@ export default class UserController {
                     message,
                     metadata: {
                         user: {
-                            email: newUser.email
+                            email: newUser?.email
                         }
                     }
                 });
             if (!newUser) {
-                return res.status(404).json({ message })
+                this.setStatus(404)
+                return {
+                    user: null,
+                    message
+                 }
             }
             message = "User account info was fetched!";
             this.logger.info({
@@ -40,7 +55,11 @@ export default class UserController {
                         }
                     }
                 });
-            return res.status(200).json({data: newUser})
+            this.setStatus(200)
+                return {
+                    user: newUser,
+                    message
+                }
         } catch (error: any) {
             this.logger.error({
                 activity_type: "Fetch user profile",
@@ -55,31 +74,45 @@ export default class UserController {
         }
     }
 
-    public async createNewPin(req: Request, res: Response) {
+    @Example<CreatePinDTO>({
+        user_id: 1,
+        pin: "97776",
+    })
+    @Security("jwt")
+    public async createNewPin(@Request() req: any) {
         try {
-            const pin = req.body.pin;
+            const pin = req.pin;
             const user_id = req.authId;
             const createPin = await this.userService.setPin(user_id, pin);
-            let message = createPin.message;
+            const { message, isSuccess } = createPin
+
             if (createPin.isSuccess) {
                 this.logger.info({
-                    activity_type: "Fetch user profile",
-                    message: createPin.message,
+                    activity_type: "Create new transaction PIN",
+                    message: message,
                     metadata: {}
                 });
-                return res.status(200).json({ message})
+                this.setStatus(200)
+                return { 
+                    isSuccess,
+                    message
+                }
             }
             this.logger.info({
-                    activity_type: "Fetch user profile",
+                    activity_type: "Create new transaction PIN",
                     message: createPin.message,
                     metadata: {
                         user: {}
                     }
                 });
-            return res.status(400).json({ message})
+            this.setStatus(400)
+            return {
+                isSuccess,
+                message
+            }
         } catch (error: any) {
             this.logger.error({
-                activity_type: "User registration",
+                activity_type: "Create new transaction PIN",
                 message: error.message,
                 metadata: {}
             });
@@ -87,31 +120,49 @@ export default class UserController {
         }
     }
 
-    public async updateProfile(req: Request, res: Response) {
+    @Put("/")
+    @Example<UpdateProfileResponseDTO>({
+        user: null,
+        isSuccess: true,
+        message: "User profile was updated successfully",
+    })
+    @Security("jwt")
+    public async updateProfile(@Request() req: any): Promise<UpdateProfileResponseDTO> {
         try {
             const updatedUser = await this.userService.update(req.authId, req.body);
+            const { message, user, isSuccess } = updatedUser;
             if (!updatedUser?.isSuccess) {
                 this.logger.info({
                     activity_type: "Update user profile",
-                    message: updatedUser.message,
+                    message,
                     metadata: {
                         user: {
-                            email: updatedUser.user.email
+                            email: updatedUser?.user?.email
                         }
                     }
                 });
-                return res.status(400).json({ message: updatedUser?.message })
+                this.setStatus(400)
+                return {
+                    user,
+                    isSuccess,
+                    message
+                }
             }
             this.logger.info({
                     activity_type: "Update user profile",
                     message: updatedUser.message,
                     metadata: {
                         user: {
-                            email: updatedUser.user.email
+                            email: updatedUser?.user?.email
                         }
                     }
                 });
-            return res.status(200).json({ data: updatedUser })
+            this.setStatus(200)
+                return {
+                    user,
+                    isSuccess,
+                    message
+                }
         } catch (error: any) {
             this.logger.error({
                 activity_type: "Update User profile",

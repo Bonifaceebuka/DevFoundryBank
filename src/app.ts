@@ -1,3 +1,4 @@
+import "reflect-metadata"; 
 import express from "express";
 import expressConfig from "./config/express";
 import { env } from "./env";

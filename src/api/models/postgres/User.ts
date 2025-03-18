@@ -11,27 +11,27 @@ export default class User {
 
     @Column()
     @Index({ unique: true })
-        email: string;
+        email!: string;
 
     @Column()
-        password: string;
+        password!: string;
 
     @Column({ nullable: true })
     // @Index()
-        firstName: string;
+        firstName!: string;
 
     @Column({ nullable: true })
     // @Index()
-        lastName: string;
+        lastName!: string;
 
     @Column({nullable: true})
-        address: string;
+        address!: string;
 
     @Column({ nullable: true })
-        phoneNumber: string;
+        phoneNumber!: string;
 
     @Column({ type: "integer", nullable: true })
-        stateLgaId: number;
+        stateLgaId!: number;
 
     @Column({ nullable: true })
         profilePicture?: string;
@@ -45,6 +45,12 @@ export default class User {
 
     @Column({ nullable: true })
     otp?: string;
+
+    @Column({ nullable: true, unique: true })
+    password_reset_token?: string;
+
+    @Column({ nullable: true })
+    token_expires_at?: Date;
 
     @Column({ default: false })
     @Index()

@@ -11,7 +11,7 @@ export default class UserKYCInfomation {
 
     @Column()
     @Index({ unique: true })
-        userId: string;
+        userId!: string;
 
     @Column()
         bvn?: string;

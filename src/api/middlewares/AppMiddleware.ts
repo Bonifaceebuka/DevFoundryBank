@@ -1,47 +1,26 @@
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { env } from "../../env"
-import { Service } from "typedi";
+import { env } from "../../env";
 import { Logger } from "../../lib/logger";
 
-@Service()
-export default class AppMiddleware{
-    constructor(
-        private readonly logger: Logger
-    ){
-        
-    }
-    public async userAuthMiddleware(req: Request, res: Response, next: NextFunction) {
-        const { headers } = req
-        let message = "Unauthorized access!";
-        if (headers.authorization && headers.authorization.startsWith('Bearer')) {
-            const bearerToken = headers.authorization.split(' ')[1];
-
-            jwt.verify(bearerToken, env.jwtConfig.secret,
-                function(error, decoded){
-                    const logger = new Logger();
-                    if (error) {
-                        logger.info(message)
-                        return res.status(402).json({ message })
-                    }
-
-                    if (!decoded || !decoded.jwtData) {
-                        let message = "Invalid request token!"
-                        logger.info(message)
-                        return res.status(402).json({ message })
-                    }
-
-                    req.authEmail = decoded.jwtData.email;
-                    req.authId = decoded.jwtData.user_id;
-                    // logger.debug("User is authenticated!", { user: decoded.jwtData.email })
-                    next();
-                }
-            )
+export function expressAuthentication(req: Request, securityName: string, scopes?: string[]): Promise<any> {
+    return new Promise((resolve, reject) => {
+        if (!req.headers.authorization) {
+            return reject(new Error("Unauthorized access!"));
         }
-        else{
-            this.logger.info(message)
-            return res.status(402).json({ message })
-        }
-    }
 
+        const token = req.headers.authorization.split(" ")[1];
+
+        jwt.verify(token, env.jwtConfig.secret, (error, decoded: any) => {
+            if (error || !decoded || !decoded.jwtData) {
+                return reject(new Error("Invalid token!"));
+            }
+
+            // Attach user data to request
+            // req.authEmail = decoded.jwtData.email;
+            // req.authId = decoded.jwtData.user_id;
+
+            resolve(decoded.jwtData);
+        });
+    });
 }

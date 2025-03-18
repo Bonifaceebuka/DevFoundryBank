@@ -4,19 +4,19 @@ import { Currency } from "../../../enums/Currency";
 
 
 export default class AddWithdrawalInformationRequest {
-    userId: string;
+    userId!: string;
 
     @IsString({ message: "Bank Name is required" })
-        bankName: string;
+        bankName!: string;
 
     @IsString({ message: "Bank Code is required" })
-        bankCode: string;
+        bankCode!: string;
 
     @IsString({ message: "Account Number is required" })
-        accountNumber: string;
+        accountNumber!: string;
 
     @IsString({ message: "Account Name is required" })
-        accountName: string;
+        accountName!: string;
 
     @IsOptional()
     @IsEnum(Currency, { message: `Currency can either be ${Object.values(Currency).join(", ")}` })

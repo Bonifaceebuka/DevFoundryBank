@@ -11,7 +11,7 @@ export default class UserNextOfKin {
 
     @Column()
     @Index({ unique: true })
-        userId: string;
+        userId!: string;
 
     @Column()
         firstName?: string;

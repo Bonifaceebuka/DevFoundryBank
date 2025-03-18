@@ -1,25 +1,66 @@
 import { Inject, Service } from 'typedi';
-import { Request, Response } from "express";
+import { Controller, Route, Post, Security, Request, Tags, Example, Get, Path, Delete } from "tsoa";
 import WithdrawalAccountService from "../services/WithdrawalAccountService";
 import { Logger } from '../../lib/logger';
-
+import { CreateWithdrawalAccountDTO, CreateWithdrawalAccountResponseDTO, FetchOneAccountResponseDTO, ListUserAccountsResponseDTO } from '../dtos/WithdrawalAccountDTO';
+import { Currency } from '../enums/Currency';
+@Tags("Withdrawal Bank Accounts")
+@Route("withdrawal-accounts")
 @Service()
-export default class WithdrawalAccountController {
+export class WithdrawalAccountController extends Controller {
     constructor(
-        private readonly withdrawalAccountService: WithdrawalAccountService,
         @Inject(()=> Logger) private readonly logger: Logger,
-    ){}
+        private readonly withdrawalAccountService: WithdrawalAccountService,
+    ){
+        super()
+        this.logger = new Logger(WithdrawalAccountController.name);
+    }
 
-    public async createNewWithdrawalAccount(req: Request, res: Response) {
+    @Post("/")
+    @Security("jwt")
+    @Example<CreateWithdrawalAccountDTO>({
+        userId: "a150226a-125b-4ccf-a89e-698c6b59da38",
+        bankName: "DF Foundry",
+        bankCode: "97776",
+        accountNumber: "97776",
+        accountName: "97776",
+        currency: Currency.NGN
+    })
+    public async createNewWithdrawalAccount(@Request() req: any): Promise<CreateWithdrawalAccountResponseDTO>{
         try {
-                const user_id = req.authId;
-                const newWallet = await this.withdrawalAccountService.addWithdrawalAccount(user_id, req.body);
-                this.logger.info(newWallet.message)
+            const user_id = req.authId;
+            const createAccountData: CreateWithdrawalAccountDTO ={
+                userId: req.userId,
+                bankName: req.bankName,
+                bankCode: req.bankCode,
+                accountNumber: req.accountNumber,
+                accountName: req.accountName,
+                currency: req.currency
+            }
+            const newWallet = await this.withdrawalAccountService.addWithdrawalAccount(user_id, createAccountData);
+            const { message, account } = newWallet;
+            this.logger.info({
+                activity_type: "Create new withdrawal bank account",
+                message,
+                metadata: {
+                    account: {
+                        id: account?.id
+                    }
+                }
+            });
                 
                 if (newWallet.isSuccess) {
-                    return res.status(201).json({ message: newWallet.message })
+                    if (newWallet.isSuccess) {
+                        this.setStatus(201)
+                        return {
+                            ...newWallet
+                        }
+                    }
                 }
-                return res.status(400).json({ message: newWallet.message })
+                this.setStatus(400);
+                return {
+                    ...newWallet
+                }
         } catch (error: any) {
                this.logger.error({
                 activity_type: "User registration",
@@ -30,24 +71,38 @@ export default class WithdrawalAccountController {
             }
     }
 
-    public async deleteWithdrawalAccount(req: Request, res: Response) {
+    @Delete("/{account_id}")
+    @Security("jwt")
+    public async deleteWithdrawalAccount(
+            @Request() req: any,
+            @Path() account_id: number
+    ): Promise<FetchOneAccountResponseDTO> {
         try {
-            const account_id = req.params.id as number
             const user_id = req.authId;
             const withdrwalAccountDeleted = await this.withdrawalAccountService.deleteWithdrawalAccount(user_id,account_id);
+            const { isSuccess, message, account } = withdrwalAccountDeleted;
+
             this.logger.info({
                 activity_type: "Remove withdrawal account",
                 message: withdrwalAccountDeleted?.message,
                 metadata: {
-                    user: {
-                        email: withdrwalAccountDeleted.data.accountNumber
+                    account:{
+                        id: account_id
                     }
                 }
             });
             if (withdrwalAccountDeleted.isSuccess) {
-                return res.status(200).json({ message: withdrwalAccountDeleted.message })
+                if (isSuccess) {
+                    this.setStatus(200)
+                    return {
+                        ...withdrwalAccountDeleted
+                    }
+                }
             }
-            return res.status(403).json({ message: withdrwalAccountDeleted.message })
+            this.setStatus(400)
+            return {
+                ...withdrwalAccountDeleted
+            }
         } catch (error: any) {
            this.logger.error({
                 activity_type: "Remove withdrawal account",
@@ -58,12 +113,14 @@ export default class WithdrawalAccountController {
         }
     }
 
-    public async listWithdrawalAccounts(req: Request, res: Response) {
+    @Get("/")
+    @Security("jwt")
+    public async listWithdrawalAccounts(@Request() req: any): Promise<ListUserAccountsResponseDTO> {
         try {
             const user_id = req.authId;
             const withdrwalAccounts = await this.withdrawalAccountService.fetchWithdrawalAccounts(user_id);
             this.logger.info({
-                activity_type: "fetch user's withdrawal accounts",
+                activity_type: "Fetch user's withdrawal accounts",
                 message: "User withdrawal accounts fetched successfully",
                 metadata: {
                     user: {
@@ -71,7 +128,20 @@ export default class WithdrawalAccountController {
                     }
                 }
             });
-            return res.status(200).json({ data: withdrwalAccounts })
+
+            if (withdrwalAccounts.isSuccess) {
+                if (withdrwalAccounts.isSuccess) {
+                    this.setStatus(200)
+                    return {
+                        ...withdrwalAccounts
+                    }
+                }
+            }
+
+            this.setStatus(400);
+            return {
+                ...withdrwalAccounts
+            }
         } catch (error: any) {
            this.logger.error({
                 activity_type: "User registration",
@@ -85,10 +155,13 @@ export default class WithdrawalAccountController {
             throw new Error("Something went wrong");
         }
     }
-
-    public async showWithdrawalAccountDetails(req: Request, res: Response) {
+    @Get("/{account_id}")
+    @Security("jwt")
+    public async showWithdrawalAccountDetails(
+        @Request() req: any,
+        @Path() account_id: number
+    ): Promise<FetchOneAccountResponseDTO> {
         try {
-            const account_id = req.params.id as number
             const user_id = req.authId;
             const withdrwalAccount = await this.withdrawalAccountService.getWithdrawalAccount(user_id, account_id);
             this.logger.info({
@@ -100,11 +173,20 @@ export default class WithdrawalAccountController {
                     }
                 }
             });
+
             if (withdrwalAccount.isSuccess) {
-                return res.status(200).json({ data: withdrwalAccount?.data })
+                if (withdrwalAccount.isSuccess) {
+                    this.setStatus(200)
+                    return {
+                        ...withdrwalAccount
+                    }
+                }
             }
 
-            return res.status(403).json({ message: withdrwalAccount.message })
+            this.setStatus(400);
+            return {
+                ...withdrwalAccount
+            }
         } catch (error: any) {
            this.logger.error({
                activity_type: "Fetch one withdrawal account of a user",
