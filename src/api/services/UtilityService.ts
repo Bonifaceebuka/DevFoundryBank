@@ -1,10 +1,12 @@
+// @ts-ignore
 import bcrypt from "bcryptjs";
 import Chance from "chance";
 import jwt from "jsonwebtoken"
 import { env } from "../../env"
 import { CharacterCasing } from "../enums/CharacterCasing";
 import User from "../models/postgres/User";
-
+import { uuid } from "uuidv4";
+import moment  from "moment"
 
 const DEFAULT_CHARACTER_LENGTH = 12;
 const chance = new Chance();
@@ -26,8 +28,10 @@ export default class UtilityService {
     }
 
     public static generateRandomString(
-        { length = DEFAULT_CHARACTER_LENGTH, casing = CharacterCasing.LOWER, numericOnly = false }: 
-        {length?: number, casing?: CharacterCasing, numericOnly?: boolean}
+        { length = DEFAULT_CHARACTER_LENGTH, 
+            casing = CharacterCasing.LOWER, 
+            numericOnly = false }: 
+            { length?: number, casing?: "upper" | "lower", numericOnly?: boolean}
     ): string {
         if(length <= 0) return "";
 
@@ -35,12 +39,13 @@ export default class UtilityService {
         return randomString;
     }
 
-    public static sanitizeUserObject(user: User): User {
+    public static sanitizeUserObject(user: User): User|null {
         if(!user) return null;
-
-        delete user.password;
-        delete user.pin;
-        delete user.otp;
+        else{
+            delete (user as any).password;
+            delete user.pin;
+            delete user.otp;
+        }
 
         return user;
     }
@@ -57,5 +62,15 @@ export default class UtilityService {
             issuer: env.jwtConfig.secret,
             audience: email
         })
+    }
+
+    public static generateUUID() {
+        const currentTime = moment();
+        const lifeSpan = 24
+        const expiresAt = currentTime.add(lifeSpan,'hours').format() as unknown as Date;
+        return {
+            uuid: uuid(),
+            expiresAt
+        }
     }
 }

@@ -5,7 +5,7 @@ import { env } from "../../env";
 
 type LogDataFormat = {
     activity_type: string;
-    message: string;
+    message: string|undefined;
     metadata: object;
 };
 

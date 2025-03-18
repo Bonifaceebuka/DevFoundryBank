@@ -1,0 +1,847 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"Currency": {
+				"enum": [
+					"NGN"
+				],
+				"type": "string"
+			},
+			"UserWithdrawalInformation": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"userId": {
+						"type": "string"
+					},
+					"currency": {
+						"$ref": "#/components/schemas/Currency"
+					},
+					"bankCode": {
+						"type": "string"
+					},
+					"bankName": {
+						"type": "string"
+					},
+					"accountNumber": {
+						"type": "string"
+					},
+					"accountName": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					},
+					"lastUpdatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"userId",
+					"bankCode",
+					"bankName",
+					"accountNumber",
+					"accountName"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateWithdrawalAccountResponseDTO": {
+				"properties": {
+					"isSuccess": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					},
+					"account": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/UserWithdrawalInformation"
+							}
+						],
+						"nullable": true
+					}
+				},
+				"required": [
+					"isSuccess",
+					"account"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"FetchOneAccountResponseDTO": {
+				"properties": {
+					"account": {
+						"$ref": "#/components/schemas/UserWithdrawalInformation"
+					},
+					"message": {
+						"type": "string"
+					},
+					"isSuccess": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"isSuccess"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ListUserAccountsResponseDTO": {
+				"properties": {
+					"accounts": {
+						"items": {
+							"$ref": "#/components/schemas/UserWithdrawalInformation"
+						},
+						"type": "array",
+						"nullable": true
+					},
+					"message": {
+						"type": "string"
+					},
+					"isSuccess": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"isSuccess"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"StateLGA": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"state": {
+						"type": "string"
+					},
+					"lga": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"state",
+					"lga"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"User": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"phoneNumber": {
+						"type": "string"
+					},
+					"stateLgaId": {
+						"type": "number",
+						"format": "double"
+					},
+					"profilePicture": {
+						"type": "string"
+					},
+					"tier": {
+						"type": "number",
+						"format": "double"
+					},
+					"pin": {
+						"type": "string"
+					},
+					"otp": {
+						"type": "string"
+					},
+					"password_reset_token": {
+						"type": "string"
+					},
+					"token_expires_at": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"isValidated": {
+						"type": "boolean"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"isEnabled": {
+						"type": "boolean"
+					},
+					"isDeleted": {
+						"type": "boolean"
+					},
+					"createdAt": {
+						"type": "string"
+					},
+					"lastUpdatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"stateLga": {
+						"$ref": "#/components/schemas/StateLGA"
+					}
+				},
+				"required": [
+					"email",
+					"password",
+					"firstName",
+					"lastName",
+					"address",
+					"phoneNumber",
+					"stateLgaId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"FetchProfileResponseDTO": {
+				"properties": {
+					"user": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/User"
+							}
+						],
+						"nullable": true
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateProfileResponseDTO": {
+				"properties": {
+					"isSuccess": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					},
+					"user": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/User"
+							}
+						],
+						"nullable": true
+					}
+				},
+				"required": [
+					"isSuccess"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PasswordResetResponseDTO": {
+				"properties": {
+					"isSuccess": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"isSuccess",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PasswordResetRequestDTO": {
+				"properties": {
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SetNewPasswordRequestDTO": {
+				"properties": {
+					"password_reset_token": {
+						"type": "string"
+					},
+					"new_password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"password_reset_token"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RegisterUserResponseDTO": {
+				"properties": {
+					"itExists": {
+						"type": "boolean"
+					},
+					"user": {
+						"$ref": "#/components/schemas/User"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"itExists"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"RegisterUserDTO": {
+				"properties": {
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"address": {
+						"type": "string"
+					},
+					"phoneNumber": {
+						"type": "string"
+					},
+					"stateLgaId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"firstName",
+					"lastName",
+					"email",
+					"password",
+					"address",
+					"phoneNumber",
+					"stateLgaId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LoginUserResponseDTO": {
+				"properties": {
+					"isSuccess": {
+						"type": "boolean"
+					},
+					"user": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/User"
+							}
+						],
+						"nullable": true
+					},
+					"token": {
+						"type": "string",
+						"nullable": true
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"isSuccess"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LoginUserDTO": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"EmailVerificationDTO": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"otp": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"otp"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {
+			"jwt": {
+				"type": "apiKey",
+				"in": "header",
+				"name": "Authorization"
+			}
+		}
+	},
+	"info": {
+		"title": "df_wallet",
+		"version": "1.0.0",
+		"description": "Developer's Foundry Wallet System",
+		"license": {
+			"name": "MIT"
+		},
+		"contact": {
+			"name": "IfeoluwaOkesola ",
+			"email": "99264083+IfeoluwaOkesola@users.noreply.github.com"
+		}
+	},
+	"paths": {
+		"/withdrawal-accounts": {
+			"post": {
+				"operationId": "CreateNewWithdrawalAccount",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CreateWithdrawalAccountResponseDTO"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"userId": "a150226a-125b-4ccf-a89e-698c6b59da38",
+											"bankName": "DF Foundry",
+											"bankCode": "97776",
+											"accountNumber": "97776",
+											"accountName": "97776",
+											"currency": "NGN"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Withdrawal Bank Accounts"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			},
+			"get": {
+				"operationId": "ListWithdrawalAccounts",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ListUserAccountsResponseDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Withdrawal Bank Accounts"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/withdrawal-accounts/{account_id}": {
+			"delete": {
+				"operationId": "DeleteWithdrawalAccount",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FetchOneAccountResponseDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Withdrawal Bank Accounts"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "account_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"get": {
+				"operationId": "ShowWithdrawalAccountDetails",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FetchOneAccountResponseDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Withdrawal Bank Accounts"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "account_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/user": {
+			"get": {
+				"operationId": "FetchProfile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FetchProfileResponseDTO"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"user": null,
+											"message": "User profile was fetched successfully"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Profile"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			},
+			"put": {
+				"operationId": "UpdateProfile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UpdateProfileResponseDTO"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"user": null,
+											"isSuccess": true,
+											"message": "User profile was updated successfully"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Profile"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/password/reset": {
+			"post": {
+				"operationId": "PerformPasswordResetRequest",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PasswordResetResponseDTO"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"email": "boniface@developersfoundry.com"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Password Reset"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/PasswordResetRequestDTO"
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "SetNewPassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PasswordResetResponseDTO"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"email": "boniface@developersfoundry.com"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Password Reset"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SetNewPasswordRequestDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/register": {
+			"post": {
+				"operationId": "Register",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RegisterUserResponseDTO"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"itExists": true,
+											"message": "User registration was successful"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RegisterUserDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/LoginUserResponseDTO"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"isSuccess": true,
+											"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+											"message": "User registration was successful"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginUserDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/email/verification": {
+			"put": {
+				"operationId": "VerifyEmail",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/LoginUserResponseDTO"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"isSuccess": true
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/EmailVerificationDTO"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

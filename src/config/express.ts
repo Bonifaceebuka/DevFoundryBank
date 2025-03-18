@@ -18,7 +18,7 @@ import { RegisterRoutes } from "../api/routes/routes";
 // const { app: appInfo } = env;
 
 const corsOptions = {
-    origin(origin, callback) {
+    origin(origin: any, callback: any) {
         callback(null, true);
     },
     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204

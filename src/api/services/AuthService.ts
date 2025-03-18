@@ -37,7 +37,7 @@ export default class AuthService {
         return { itExists: false, user: createdUser, message };
     }
 
-    public async loginUser(req: AuthenticateUserRequest): Promise<{ isSuccess: boolean, message?: string, user?: User, token?: string }> {
+    public async loginUser(req: AuthenticateUserRequest): Promise<{ isSuccess: boolean, message?: string, user?: User|null|undefined, token?: string }> {
         const { email, password } = req;
 
         const existingUser = await UserRepository.findByEmail(email);
@@ -74,14 +74,15 @@ export default class AuthService {
             return { isSuccess: false, message};
         }
         
-        const user = UtilityService.sanitizeUserObject(existingUser);
+        const jwtDetails = UtilityService.generateJWT(existingUser.email, existingUser.id as string);
+        message = "User JWT was generated";
+
+        const sanitizedUser = UtilityService.sanitizeUserObject(existingUser);
         message = "User object was sanitized";
         this.logger.debug(message)
         // generate JWT
-        const jwtDetails = UtilityService.generateJWT(user.email, user.id);
-        message = "User JWT was generated";
         this.logger.debug(message)
-        return { isSuccess: true, user, token: jwtDetails, message:"Login was successful" };
+        return { isSuccess: true, user: sanitizedUser, token: jwtDetails, message:"Login was successful" };
     }
 
     public async validateEmail(req: AuthenticateUserOtp): Promise<EmailVerificationResponseDTO> {
