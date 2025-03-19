@@ -13,7 +13,7 @@ export const UserRepository = dataSource.getRepository(User).extend({
     },
 
     async findByEmail(email: string): Promise<User|null> {
-        return this.findOne({ where: { email } });
+        return this.findOne({ where: { email, deletedAt: IsNull() } });
     },
 
     async findByPasswordResetToken(password_reset_token: string): Promise<User | null> {

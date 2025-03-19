@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 import { Logger } from '../../lib/logger';
 import { Tags, Route, Controller, Post, Body, Example, Put } from 'tsoa';
 import { EmailVerificationDTO, LoginUserDTO, LoginUserResponseDTO, RegisterUserDTO, RegisterUserResponseDTO } from '../dtos/AuthDTO';
-import { CustomApiResponse, errorResponse, serverErrorResponse, successResponse } from '../errors/errorHandler';
+import { CustomApiResponse, errorResponse, serverErrorResponse, successResponse } from '../helpers/responseHandlers';
 import { MESSAGES } from '../constants/messages';
 import { ACTIVITY_TYPES } from '../constants/activity_types';
 
@@ -23,7 +23,6 @@ export class AuthController extends Controller {
 
     @Post("/register")
     public async register(@Body() req: RegisterUserDTO): Promise<CustomApiResponse> {
-    try {
             const newUser = await this.authService.registerUser(req);
             if (newUser.itExists) {
                 this.logger.info({
@@ -50,24 +49,11 @@ export class AuthController extends Controller {
             });
             this.setStatus(201)
             return successResponse(newUser?.message as string, newUser.user, 201)
-        } catch (error: any) {
-            this.logger.error({
-                activity_type:ACTIVITY_TYPES.USER_REGISTRATION,
-                message: error.message,
-                metadata: {
-                    user: {
-                        email: req?.email
-                    }
-                }
-            });
-        return serverErrorResponse(MESSAGES.COMMON.INTERNAL_SERVER_ERROR);
-        }
     }
 
     @Post("/login")
     public async login(@Body() req: LoginUserDTO): Promise<CustomApiResponse> {
         const{ email } = req;
-        try {
             const authUser = await this.authService.loginUser(req);
             const { message, token, user } = authUser
             this.logger.info({
@@ -88,19 +74,7 @@ export class AuthController extends Controller {
                 user,
                 token
             }
-            return successResponse(MESSAGES.LOGIN.INVALID_LOGIN, data)
-        } catch (error: any) {
-            this.logger.error({
-                activity_type:ACTIVITY_TYPES.USER_REGISTRATION,
-                message: error.message,
-                metadata: {
-                    user: {
-                        email
-                    }
-                }
-            });
-            return serverErrorResponse(MESSAGES.COMMON.INTERNAL_SERVER_ERROR);
-        }
+            return successResponse(MESSAGES.LOGIN.LOGIN_SUCCESSFUL, data)
     }
 
 

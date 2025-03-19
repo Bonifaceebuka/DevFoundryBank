@@ -4,6 +4,8 @@ import { UserRepository } from "../repositories/UserRepository";
 import { PasswordResetRepository } from "../repositories/PasswordResetRepository";
 import UtilityService from "../services/UtilityService";
 import { PasswordResetRequestDTO, PasswordResetResponseDTO, SetNewPasswordRequestDTO } from "../dtos/PasswordResetDTO";
+import { AppError } from "../errors/AppError";
+import { MESSAGES } from "../constants/messages";
 
 @Service()
 export default class PasswordResetService {
@@ -17,13 +19,13 @@ export default class PasswordResetService {
        const { email } = req;
        const existingUser = await UserRepository.findByEmail(email);
         if(!existingUser) {
-            return { isSuccess: false, message: "You don't have an account with us yet" };
+            throw new AppError(MESSAGES.USER.NOT_FOUND, 404) 
         }
         else if (!existingUser.isActive) {
-            return { isSuccess: false, message: "You can only reset the password of an active account" };
+            throw new AppError(MESSAGES.PASSWWORD_RESET.INACTIVE_ACCOUNT) 
         }
         else if (!existingUser.isEnabled) {
-            return { isSuccess: false, message: "You can only reset the password of an enabled account" };
+            throw new AppError(MESSAGES.PASSWWORD_RESET.DISABLED_ACCOUNT);
         }
         else{
             const passwordResetToken = UtilityService.generateUUID();
@@ -39,13 +41,13 @@ export default class PasswordResetService {
         const { password_reset_token } = req;
         const existingUser = await UserRepository.findByPasswordResetToken(password_reset_token);
         if (!existingUser) {
-            return { isSuccess: false, message: "You don't have an account with us yet" };
+            throw new AppError(MESSAGES.USER.NOT_FOUND, 404); 
         }
         else if (!existingUser.isActive) {
-            return { isSuccess: false, message: "You can only reset the password of an active account" };
+            throw new AppError(MESSAGES.PASSWWORD_RESET.INACTIVE_ACCOUNT) 
         }
         else if (!existingUser.isEnabled) {
-            return { isSuccess: false, message: "You can only reset the password of an enabled account" };
+            throw new AppError(MESSAGES.PASSWWORD_RESET.DISABLED_ACCOUNT);
         }
         else {
             // const passwordResetToken = UtilityService.generateUUID();

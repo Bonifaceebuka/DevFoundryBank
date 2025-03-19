@@ -1,11 +1,11 @@
-import { CustomApiResponse, serverErrorResponse } from './../errors/errorHandler';
+import { CustomApiResponse, serverErrorResponse } from '../helpers/responseHandlers';
 import UserService from "../services/UserService";
 import { Inject, Service } from 'typedi';
 import { Logger } from "../../lib/logger";
 import { Example, Get, Request, Route, Security, Tags, Controller, Put } from "tsoa";
 import { FetchProfileResponseDTO, UpdateProfileResponseDTO } from "../dtos/UserDTO";
 import { CreatePinDTO } from "../dtos/UserPinDTO";
-import { errorResponse, successResponse } from "../errors/errorHandler";
+import { errorResponse, successResponse } from "../helpers/responseHandlers";
 import { MESSAGES } from "../constants/messages";
 import { ACTIVITY_TYPES } from "../constants/activity_types";
 
@@ -23,7 +23,7 @@ export class UserController extends Controller {
         }
 
     @Get("/")
-    @Security("jwt")
+    @Security("bearerAuth")
     public async fetchProfile(@Request() req: any): Promise<FetchProfileResponseDTO> {
         try {
             const authUserId = req.authId
@@ -68,7 +68,7 @@ export class UserController extends Controller {
         }
     }
 
-    @Security("jwt")
+    @Security("bearerAuth")
     public async createNewPin(@Request() req: any) {
         try {
             const pin = req.pin;
@@ -105,7 +105,7 @@ export class UserController extends Controller {
     }
 
     @Put("/")
-    @Security("jwt")
+    @Security("bearerAuth")
     public async updateProfile(@Request() req: any): Promise<CustomApiResponse> {
         try {
             const updatedUser = await this.userService.update(req.authId, req.body);

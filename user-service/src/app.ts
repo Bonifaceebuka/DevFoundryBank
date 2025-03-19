@@ -4,8 +4,8 @@ import expressConfig from "./config/express";
 import { env } from "./env";
 import { Logger } from "./lib/logger"
 import swaggerUi from "swagger-ui-express";
-// import { swaggerDocConfig } from "./config/swagger"
 import * as swaggerDocument from './api/swagger/swagger.json';
+import { errorHandlerMiddlware } from "./api/middlewares/errorHandlerMiddleware";
 const logger = new Logger();
 
 (async () => {
@@ -14,7 +14,7 @@ const logger = new Logger();
     const app: express.Application = express();
     app.use('/swagger/api', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     await expressConfig(app);
-    
+    app.use(errorHandlerMiddlware as express.ErrorRequestHandler)
     app.listen(appInfo.port, () => {
         logger.info(`${appInfo.displayName}, v${appInfo.version} is started on port ${appInfo.port}`);
         logger.info(`${appInfo.displayName}, v${appInfo.version} is started on port ${appInfo.port}`);

@@ -8,6 +8,8 @@ import { UserRepository } from "../repositories/UserRepository";
 import UtilityService from "./UtilityService";
 import { CreatePinResponseDTO } from "../dtos/UserPinDTO";
 import { UpdateProfileResponseDTO } from "../dtos/UserDTO";
+import { AppError } from "../errors/AppError";
+import { MESSAGES } from "../constants/messages";
 
 
 @Service()
@@ -27,10 +29,10 @@ export default class UserService {
         // Password verification
         const user = await UserRepository.findById(id);
         if (!user){
-            return { isSuccess: false, message: "You account was not found!" };
+            throw new AppError(MESSAGES.USER.NOT_FOUND, 404);
         }
         if (user?.pin){
-            return { isSuccess: false, message: "You already have a transaction PIN on your account!" };
+            throw new AppError(MESSAGES.PIN.ALREADY_EXISTS);
         }
         else{
             await UserRepository.updateUserPin(user, { pin });
@@ -43,12 +45,12 @@ export default class UserService {
        
         const existingUser = await UserRepository.findById(id);
         if(!existingUser) {
-            return { isSuccess: false, message: "User doesn't exist!" };
+            throw new AppError(MESSAGES.USER.NOT_FOUND, 404); 
         }
 
         const updatedUser = await UserRepository.updateById(id, { ...req });
         if (!updatedUser) {
-            return { isSuccess: false, message: "User doesn't exist!" };
+            throw new AppError(MESSAGES.USER.NOT_FOUND, 404); 
         }
         const user = UtilityService.sanitizeUserObject(updatedUser);
     

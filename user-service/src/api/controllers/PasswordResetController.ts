@@ -4,7 +4,7 @@ import { Inject, Service } from "typedi";
 import { Controller, Route, Body, Post, Example, Response, SuccessResponse, Tags, Put, Path } from "tsoa";
 import { PasswordResetResponseDTO, PasswordResetRequestDTO, SetNewPasswordRequestDTO } from "../dtos/PasswordResetDTO";
 import { MESSAGES } from "../constants/messages";
-import { CustomApiResponse, errorResponse, serverErrorResponse, successResponse } from "../errors/errorHandler";
+import { CustomApiResponse, errorResponse, serverErrorResponse, successResponse } from "../helpers/responseHandlers";
 import { ACTIVITY_TYPES } from "../constants/activity_types";
 
 @Route("password/reset")

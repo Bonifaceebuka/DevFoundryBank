@@ -76,6 +76,8 @@ export default class User {
     @Index()
         lastUpdatedAt?: Date;
 
+    @Column({nullable:true})
+    deletedAt?: Date;
 
     // ======== JOINS =========
 

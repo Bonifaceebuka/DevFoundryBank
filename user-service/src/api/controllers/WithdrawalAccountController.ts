@@ -3,7 +3,7 @@ import { Controller, Route, Post, Security, Request, Tags, Example, Get, Path, D
 import WithdrawalAccountService from "../services/WithdrawalAccountService";
 import { Logger } from '../../lib/logger';
 import { CreateWithdrawalAccountDTO } from '../dtos/WithdrawalAccountDTO';
-import { CustomApiResponse, serverErrorResponse, successResponse } from '../errors/errorHandler';
+import { CustomApiResponse, serverErrorResponse, successResponse } from '../helpers/responseHandlers';
 import { ACTIVITY_TYPES } from '../constants/activity_types';
 import { dynamic_messages, MESSAGES } from '../constants/messages';
 @Tags("Withdrawal Bank Accounts")
@@ -19,7 +19,7 @@ export class WithdrawalAccountController extends Controller {
     }
 
     @Post("/")
-    @Security("jwt")
+    @Security("bearerAuth")
     public async createNewWithdrawalAccount(@Request() req: any): Promise<CustomApiResponse>{
         try {
             const user_id = req.authId;
@@ -62,7 +62,7 @@ export class WithdrawalAccountController extends Controller {
     }
 
     @Delete("/{account_id}")
-    @Security("jwt")
+    @Security("bearerAuth")
     public async deleteWithdrawalAccount(
             @Request() req: any,
             @Path() account_id: number
@@ -100,7 +100,7 @@ export class WithdrawalAccountController extends Controller {
     }
 
     @Get("/")
-    @Security("jwt")
+    @Security("bearerAuth")
     public async listWithdrawalAccounts(@Request() req: any): Promise<CustomApiResponse> {
         try {
             const user_id = req.authId;
@@ -138,7 +138,7 @@ export class WithdrawalAccountController extends Controller {
         }
     }
     @Get("/{account_id}")
-    @Security("jwt")
+    @Security("bearerAuth")
     public async showWithdrawalAccountDetails(
         @Request() req: any,
         @Path() account_id: number

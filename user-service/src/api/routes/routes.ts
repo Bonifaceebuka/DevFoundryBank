@@ -67,6 +67,7 @@ const models: TsoaRoute.Models = {
             "isDeleted": {"dataType":"boolean"},
             "createdAt": {"dataType":"string"},
             "lastUpdatedAt": {"dataType":"datetime"},
+            "deletedAt": {"dataType":"datetime"},
             "stateLga": {"ref":"StateLGA"},
         },
         "additionalProperties": false,
@@ -77,15 +78,6 @@ const models: TsoaRoute.Models = {
         "properties": {
             "user": {"dataType":"union","subSchemas":[{"ref":"User"},{"dataType":"enum","enums":[null]}]},
             "message": {"dataType":"string"},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "PasswordResetResponseDTO": {
-        "dataType": "refObject",
-        "properties": {
-            "isSuccess": {"dataType":"boolean","required":true},
-            "message": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
     },
@@ -155,7 +147,7 @@ export function RegisterRoutes(app: Router) {
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
         app.post('/withdrawal-accounts',
-            authenticateMiddleware([{"jwt":[]}]),
+            authenticateMiddleware([{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(WithdrawalAccountController)),
             ...(fetchMiddlewares<RequestHandler>(WithdrawalAccountController.prototype.createNewWithdrawalAccount)),
 
@@ -192,7 +184,7 @@ export function RegisterRoutes(app: Router) {
                 account_id: {"in":"path","name":"account_id","required":true,"dataType":"double"},
         };
         app.delete('/withdrawal-accounts/:account_id',
-            authenticateMiddleware([{"jwt":[]}]),
+            authenticateMiddleware([{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(WithdrawalAccountController)),
             ...(fetchMiddlewares<RequestHandler>(WithdrawalAccountController.prototype.deleteWithdrawalAccount)),
 
@@ -228,7 +220,7 @@ export function RegisterRoutes(app: Router) {
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
         app.get('/withdrawal-accounts',
-            authenticateMiddleware([{"jwt":[]}]),
+            authenticateMiddleware([{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(WithdrawalAccountController)),
             ...(fetchMiddlewares<RequestHandler>(WithdrawalAccountController.prototype.listWithdrawalAccounts)),
 
@@ -265,7 +257,7 @@ export function RegisterRoutes(app: Router) {
                 account_id: {"in":"path","name":"account_id","required":true,"dataType":"double"},
         };
         app.get('/withdrawal-accounts/:account_id',
-            authenticateMiddleware([{"jwt":[]}]),
+            authenticateMiddleware([{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(WithdrawalAccountController)),
             ...(fetchMiddlewares<RequestHandler>(WithdrawalAccountController.prototype.showWithdrawalAccountDetails)),
 
@@ -301,7 +293,7 @@ export function RegisterRoutes(app: Router) {
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
         app.get('/users',
-            authenticateMiddleware([{"jwt":[]}]),
+            authenticateMiddleware([{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(UserController)),
             ...(fetchMiddlewares<RequestHandler>(UserController.prototype.fetchProfile)),
 
@@ -337,7 +329,7 @@ export function RegisterRoutes(app: Router) {
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
         app.put('/users',
-            authenticateMiddleware([{"jwt":[]}]),
+            authenticateMiddleware([{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(UserController)),
             ...(fetchMiddlewares<RequestHandler>(UserController.prototype.updateProfile)),
 
