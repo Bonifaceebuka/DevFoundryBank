@@ -19,12 +19,14 @@ export const dataSource = new DataSource({
 });
 
 export const postgresLoader = async () => {
+    const ssl = env.isProduction ? { rejectUnauthorized: false } : false
     console.log("pg.host", pg.host)
     console.log("pg.port", pg.port)
     console.log("pg.user", pg.user)
     console.log("pg.pass", pg.pass)
     console.log("pg.database", pg.database)
     console.log("env.isProduction", env.isProduction)
+    console.log({ ssl })
     await dataSource.initialize()
         .then(() => console.log("✅ Connected to PostgreSQL database"))
         .catch((err) => console.error(`❌ Database connection error: ${err}`));
