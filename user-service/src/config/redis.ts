@@ -16,6 +16,8 @@ export const redisConfig = {
     ].filter(Boolean).join("")}`,
     connectTimeout: 10000, // in milliseconds,
     socket: {
+        tls: (!env.isLocal && !env.isTest) ? true: false,
+        authorized: false,
         reconnectStrategy: function (retries: number) {
             if (retries > 20) {
                 console.log("❌  Too many attempts to reconnect. Redis connection was terminated");
