@@ -114,6 +114,10 @@
 						"type": "string",
 						"format": "date-time"
 					},
+					"deletedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
 					"stateLga": {
 						"$ref": "#/components/schemas/StateLGA"
 					}
@@ -144,22 +148,6 @@
 						"type": "string"
 					}
 				},
-				"type": "object",
-				"additionalProperties": false
-			},
-			"PasswordResetResponseDTO": {
-				"properties": {
-					"isSuccess": {
-						"type": "boolean"
-					},
-					"message": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"isSuccess",
-					"message"
-				],
 				"type": "object",
 				"additionalProperties": false
 			},
@@ -240,10 +228,10 @@
 			}
 		},
 		"securitySchemes": {
-			"BearerAuth": {
-				"type": "http",
-				"scheme": "bearer",
-				"bearerFormat": "JWT"
+			"bearerAuth": {
+				"type": "apiKey",
+				"name": "Authorization",
+				"in": "header"
 			}
 		}
 	},
@@ -280,7 +268,7 @@
 				],
 				"security": [
 					{
-						"jwt": []
+						"bearerAuth": []
 					}
 				],
 				"parameters": []
@@ -304,7 +292,7 @@
 				],
 				"security": [
 					{
-						"jwt": []
+						"bearerAuth": []
 					}
 				],
 				"parameters": []
@@ -330,7 +318,7 @@
 				],
 				"security": [
 					{
-						"jwt": []
+						"bearerAuth": []
 					}
 				],
 				"parameters": [
@@ -364,7 +352,7 @@
 				],
 				"security": [
 					{
-						"jwt": []
+						"bearerAuth": []
 					}
 				],
 				"parameters": [
@@ -400,7 +388,7 @@
 				],
 				"security": [
 					{
-						"jwt": []
+						"bearerAuth": []
 					}
 				],
 				"parameters": []
@@ -424,7 +412,7 @@
 				],
 				"security": [
 					{
-						"jwt": []
+						"bearerAuth": []
 					}
 				],
 				"parameters": []
@@ -439,7 +427,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/PasswordResetResponseDTO"
+									"$ref": "#/components/schemas/CustomApiResponse"
 								},
 								"examples": {
 									"Example 1": {
@@ -476,14 +464,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/PasswordResetResponseDTO"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"email": "boniface@developersfoundry.com"
-										}
-									}
+									"$ref": "#/components/schemas/CustomApiResponse"
 								}
 							}
 						}

@@ -3,6 +3,8 @@ import UserWithdrawalInformation from "../models/postgres/UserWithdrawalInformat
 import AddWithdrawalInformationRequest from "../models/payload/requests/AddWithdrawalInformationRequest";
 import { Service } from "typedi";
 import { CreateWithdrawalAccountDTO, CreateWithdrawalAccountResponseDTO, FetchOneAccountResponseDTO, ListUserAccountsResponseDTO } from '../dtos/WithdrawalAccountDTO';
+import { dynamic_messages, MESSAGES } from '../constants/messages';
+import { AppError } from '../errors/AppError';
 // import { Logger } from "../../lib/logger";
 
 @Service()
@@ -10,8 +12,6 @@ export default class WithdrawalAccountService {
     constructor(
         // private logger: Logger
     ){}
-
-
     public async updateWithdrawalAccount(user_id: string, id: number, req: AddWithdrawalInformationRequest) {
         await UserWithdrawalInformationRepository.updateUserAccount(user_id, id, req);
     }
@@ -26,16 +26,10 @@ export default class WithdrawalAccountService {
             };
         }
         if (accountAlreadyExists && accountAlreadyExists?.userId !== user_id) {
-            return {
-                isSuccess: false,
-                message: 'Unauthorized request!',
-            };
+            throw new AppError(MESSAGES.COMMON.UNATHORISED_ACCESS); 
         }
         else{
-            return {
-                isSuccess: false,
-                message: 'Account not found!',
-            }; 
+            throw new AppError(dynamic_messages.NOT_FOUND('Account')); 
         }
     }
 
@@ -50,16 +44,10 @@ export default class WithdrawalAccountService {
             };
         }
         if (withdrawalAccountDetails && withdrawalAccountDetails?.userId !== user_id) {
-            return {
-                isSuccess: false,
-                message: 'Unauthorized request!',
-            };
+            throw new AppError(MESSAGES.COMMON.UNATHORISED_ACCESS); 
         }
         else {
-            return {
-                isSuccess: false,
-                message: 'Account not found!',
-            };
+            throw new AppError(dynamic_messages.NOT_FOUND('Account'));
         }
     }
 
@@ -78,11 +66,7 @@ export default class WithdrawalAccountService {
         // Api to fetch list of banks
         const accountAlreadyExists = await UserWithdrawalInformationRepository.findByAccountNumber(req.accountNumber);
         if (accountAlreadyExists){
-                return { 
-                    isSuccess: false, 
-                    message: `You already have an account with the account number ${req.accountNumber}!`, 
-                    account: accountAlreadyExists 
-                };
+            throw new AppError(MESSAGES.WITHDRAWAL_ACCOUNT.ALREADY_EXISTS,400,accountAlreadyExists); 
             }
         else{
             const createAccountData: UserWithdrawalInformation ={

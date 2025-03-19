@@ -1,12 +1,12 @@
 import compression from "compression";
 import cors from "cors";
 import { Application, json, 
-    // Request, Response, 
+    Request, Response, 
     urlencoded } from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 
-// import { env } from "../env";
+import { env } from "../env";
 
 import { logLoader } from "./logger";
 import { mongoDBLoader } from "./mongodb";
@@ -14,7 +14,6 @@ import { postgresLoader } from "./postgres";
 import { redisLoader } from "./redis";
 // import routes from "../api/routes";
 import { RegisterRoutes } from "../api/routes/routes";
-import { errorHandlerMiddlware } from "src/api/middlewares/errohandlerMiddleware";
 
 // const { app: appInfo } = env;
 
@@ -49,13 +48,12 @@ const expressConfig = async (app: Application): Promise<void> => {
     await logLoader();
     await postgresLoader();
     await mongoDBLoader();
-    await redisLoader();
+    // await redisLoader();
 
     // app.use('/api',routes);
 
-    // app.get("/", (req:Request, res:Response) => res.send(`${appInfo.displayName} - v${appInfo.version}`));
+    // app.get("/", (req:any, res:any) => res.send(`${appInfo.displayName} - v${appInfo.version}`));
     RegisterRoutes(app);
-    // app.use(errorHandlerMiddlware)
 };
 
 export default expressConfig;
