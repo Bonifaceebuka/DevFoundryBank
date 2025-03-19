@@ -15,7 +15,7 @@ export const dataSource = new DataSource({
     migrations: [__dirname + "/../migrations/*{.ts,.js}"],
     synchronize: false,
     logging: true,
-    ssl: !env.isLocal && !env.isTest ? { rejectUnauthorized: false } : false,
+    ssl: env.isProduction ? { rejectUnauthorized: false } : false,
 });
 
 export const postgresLoader = async () => {
@@ -24,6 +24,7 @@ export const postgresLoader = async () => {
     console.log("pg.user", pg.user)
     console.log("pg.pass", pg.pass)
     console.log("pg.database", pg.database)
+    console.log("env.isProduction", env.isProduction)
     await dataSource.initialize()
         .then(() => console.log("✅ Connected to PostgreSQL database"))
         .catch((err) => console.error(`❌ Database connection error: ${err}`));
