@@ -1,22 +1,23 @@
 import express from "express";
-import { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import { CONFIGS } from "./common/config.js";
+import { dbConnection } from "./common/mongodb.js";
+import { logRequest } from "./middlewares/requestHandler.middleware.js";
 
 dotenv.config();
 const app = express();
+
+async () => {
+    await dbConnection;
+}
 const activeEnv = process.env.NODE_ENV;
 var allowOrigins = []
 
-const preFetch = (req: Request, res: Response, next: NextFunction) => {
-    console.log({ req })
-    console.log('request to instance 1')
-    next()
-}
 
 
+app.use(logRequest)
 var userService
 var activeVerison = "/api/"
 
@@ -52,7 +53,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use('/user', preFetch, createProxyMiddleware({
+app.use('/user', createProxyMiddleware({
     target: userService, 
     changeOrigin: true,
     pathRewrite: {
@@ -65,7 +66,6 @@ app.use('/', createProxyMiddleware({
 }));
 
 app.use(express.json());
-
 app.listen(CONFIGS.SERVER_PORT, () => {
         console.log(`API GATEWAY is running on port ${CONFIGS.SERVER_PORT}`);
 });

@@ -1,5 +1,3 @@
-// src/types/global.d.ts
-
 declare module "jsonwebtoken" {
     import jwt from "jsonwebtoken";
     export = jwt;

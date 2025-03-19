@@ -1,0 +1,1 @@
+// return declare module "mongoose"
