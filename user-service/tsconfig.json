@@ -14,7 +14,10 @@
     "resolveJsonModule": true,
     "sourceMap": true,
     "incremental": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "typeRoots": [
+      "node_modules/@types"
+    ],
   },
   "include": [
     "src/**/*",
