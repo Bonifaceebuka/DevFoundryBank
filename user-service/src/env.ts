@@ -64,5 +64,9 @@ export const env = {
     jwtConfig:{
         secret: getOsEnv('JWT_SECRET'),
         issuer: getOsEnv('JWT_ISSUER'),
+    },
+    api_keys:{
+        API_GATEWAY: getOsEnv("API_GATEWAY_PUBLIC_KEY"),
+        API_KEY_EXPIRES_AT: 24
     }
 };

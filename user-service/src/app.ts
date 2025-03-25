@@ -6,12 +6,14 @@ import { Logger } from "./lib/logger"
 import swaggerUi from "swagger-ui-express";
 import * as swaggerDocument from './api/swagger/swagger.json';
 import { errorHandlerMiddlware } from "./api/middlewares/errorHandlerMiddleware";
+import { gatewayMiddleware } from "./api/middlewares/gatewayMiddleware";
 const logger = new Logger();
 
 (async () => {
     const { app: appInfo } = env;
 
     const app: express.Application = express();
+    app.use(gatewayMiddleware);
     app.use('/swagger/api', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     await expressConfig(app);
     app.use(errorHandlerMiddlware as express.ErrorRequestHandler)

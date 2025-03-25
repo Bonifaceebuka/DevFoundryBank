@@ -10,6 +10,8 @@ import { UserController } from './../controllers/UserController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { PasswordResetController } from './../controllers/PasswordResetController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { GatewayController } from './../controllers/GatewayController';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './../controllers/AuthController';
 import { expressAuthentication } from './../middlewares/AppMiddleware';
 // @ts-ignore - no great way to install types from subpackage
@@ -420,6 +422,41 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'setNewPassword',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsGatewayController_register: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"body","name":"req","required":true,"ref":"RegisterUserDTO"},
+        };
+        app.post('/auth/gateway',
+            ...(fetchMiddlewares<RequestHandler>(GatewayController)),
+            ...(fetchMiddlewares<RequestHandler>(GatewayController.prototype.register)),
+
+            async function GatewayController_register(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsGatewayController_register, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<GatewayController>(GatewayController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'register',
                 controller,
                 response,
                 next,
