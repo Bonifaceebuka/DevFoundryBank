@@ -1,0 +1,39 @@
+{
+  "name": "dummy_fintech",
+  "version": "1.0.0",
+  "description": "This is the notification microservice for DevFoundryBankApp",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "npx nodemon --exec node --loader ts-node/esm src/server.ts",
+    "build": "rimraf dist && tsc",
+    "start": "node dist/src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "mongoose": "^8.12.1",
+    "nodemailer": "^6.10.0",
+    "nodemailer-express-handlebars": "^7.0.0",
+    "path": "^0.12.7",
+    "rimraf": "^6.0.1",
+    "tsconfig-paths": "^4.2.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.10",
+    "@types/nodemailer": "^6.4.17",
+    "@types/nodemailer-express-handlebars": "^4.0.5",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
+  }
+}
