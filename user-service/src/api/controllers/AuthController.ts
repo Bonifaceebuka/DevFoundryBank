@@ -29,9 +29,9 @@ export class AuthController extends Controller {
                     activity_type:ACTIVITY_TYPES.USER_REGISTRATION,
                     message: newUser?.message,
                     metadata: {
-                        user: {
-                            email: newUser?.user?.email
-                        }
+                        // user: {
+                        //     email: newUser?.user?.email
+                        // }
                     }
                 });
                 this.setStatus(400)
@@ -42,9 +42,9 @@ export class AuthController extends Controller {
                 activity_type:ACTIVITY_TYPES.USER_REGISTRATION,
                 message: newUser?.message,
                 metadata: {
-                    user: {
-                        email: newUser?.user?.email
-                    }
+                    // user: {
+                    //     email: newUser?.user?.email
+                    // }
                 }
             });
             this.setStatus(201)

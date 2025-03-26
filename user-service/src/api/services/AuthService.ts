@@ -9,6 +9,7 @@ import AuthenticateUserOtp from "../models/payload/requests/AuthenticateUserOtp"
 import { EmailVerificationResponseDTO, RegisterUserResponseDTO } from "../dtos/AuthDTO";
 import { AppError } from "../errors/AppError";
 import { MESSAGES } from "../constants/messages";
+import { sendRabbitMQMessage } from "../queues/email/producer";
 
 @Service()
 export default class AuthService {
@@ -18,7 +19,9 @@ export default class AuthService {
         this.logger = new Logger(AuthService.name);
     }
 
-    public async registerUser(req: CreateUserRequest): Promise<RegisterUserResponseDTO> {
+    public async registerUser(req: CreateUserRequest)
+    // : Promise<RegisterUserResponseDTO> 
+    {
         const { email, password } = req;
 
         const existingUser = await UserRepository.findByEmail(email);
@@ -30,13 +33,21 @@ export default class AuthService {
 
         const hashedPassword = await UtilityService.hashString(password);
         const otp = UtilityService.generateRandomString({ length: 6, numericOnly: true });
-        const createdUser = await UserRepository.add({ ...req, otp, password: hashedPassword });
+        // const createdUser = await UserRepository.add({ ...req, otp, password: hashedPassword });
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         otp; // send otp to user
         // todo:: calculate OTP expriation time and save
-        
+        const queue_name = 'email_verification_queue';
+        const messageBody = {
+            otp,
+            email,
+            subject:"Account Activation",
+            email_category:'email_verification'
+        }
+        await sendRabbitMQMessage(queue_name, messageBody);
+
         message = "User registration was successful";
-        return { itExists: false, user: createdUser, message };
+        return { itExists: false, user: null, message };
     }
 
     public async loginUser(req: AuthenticateUserRequest): Promise<{ isSuccess: boolean, message?: string, user?: User|null|undefined, token?: string }> {

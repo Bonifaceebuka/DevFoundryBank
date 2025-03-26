@@ -14,7 +14,9 @@ const logger = new Logger();
 
     const app: express.Application = express();
     app.use(gatewayMiddleware);
-    app.use('/swagger/api', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+    if (!env.isProduction) {
+        app.use('/swagger/api', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+    }
     await expressConfig(app);
     app.use(errorHandlerMiddlware as express.ErrorRequestHandler)
     app.listen(appInfo.port, () => {

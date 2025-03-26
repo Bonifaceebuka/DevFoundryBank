@@ -39,6 +39,7 @@
     "@typescript-eslint/eslint-plugin": "^8.24.0",
     "@typescript-eslint/eslint-plugin-tslint": "^7.0.2",
     "@typescript-eslint/parser": "^8.24.0",
+    "amqplib": "^0.10.5",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.3",
     "chance": "^1.1.12",
@@ -73,6 +74,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",
+    "@types/amqplib": "^0.10.7",
     "@types/bcryptjs": "^2.4.2",
     "@types/chance": "^1.1.6",
     "@types/compression": "^1.7.5",

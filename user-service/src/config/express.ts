@@ -14,6 +14,8 @@ import { postgresLoader } from "./postgres";
 import { redisLoader } from "./redis";
 // import routes from "../api/routes";
 import { RegisterRoutes } from "../api/routes/routes";
+import { sendRabbitMQMessage } from "../api/queues/email/producer";
+import { consumeRabbitMQMessage } from "../api/queues/email/consumer";
 
 // const { app: appInfo } = env;
 
@@ -48,6 +50,7 @@ const expressConfig = async (app: Application): Promise<void> => {
     await logLoader();
     await postgresLoader();
     await mongoDBLoader();
+    // await consumeRabbitMQMessage();
     // await redisLoader();
 
     // app.use('/api',routes);
