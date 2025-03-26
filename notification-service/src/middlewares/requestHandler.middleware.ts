@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { userServiceRequestDoc } from "../models/user_service.collection.js";
-import { userServiceResponseDoc } from "../models/user_service.collection.js";
+import { userServiceRequestDoc } from "../models/user_service.collection";
+import { userServiceResponseDoc } from "../models/user_service.collection";
 
 export const logRequest = async(req: any, res: Response, next: NextFunction) => {
     const newRequest = {

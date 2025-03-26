@@ -1,0 +1,7 @@
+{
+    "watch": [
+        "src"
+    ],
+    "ext": "ts",
+    "exec": "rimraf src/swagger && npm run tsoa:update && nodemon --exec ts-node src/server.ts"
+}

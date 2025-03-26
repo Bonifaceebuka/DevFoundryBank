@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-import { CONFIGS } from "./config.js"
+import { CONFIGS } from "./index"
 
 const dbConnectionString = CONFIGS.MONGO_DB_URL as string
 

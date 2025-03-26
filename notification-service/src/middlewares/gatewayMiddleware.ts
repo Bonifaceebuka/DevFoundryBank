@@ -1,20 +1,21 @@
 import { Response, NextFunction } from "express";
-import { CONFIGS } from "../common/config.js";
-import { verifySignature } from "../helpers/security.js";
+import { CONFIGS } from "../common/configs";
+import { verifySignature } from "../helpers/security";
+import { AppError } from "../common/errors/AppError";
 
 export const gatewayMiddleware = async (req: any, res: Response, next: NextFunction) => {
     const validApiKey = CONFIGS.API_GATEWAY_PUBLIC_KEY as string
 
     if (!req.headers["x-api-gateway-key"] || req.headers["x-api-gateway-key"].trim().length === 0) {
-        throw new Error("Unauthorized access!");
+        return next(new AppError("Unauthorized access!", 403));
     }
 
     if (!req.headers["x-api-gateway-timestamp"] || req.headers["x-api-gateway-timestamp"].trim().length === 0) {
-        throw new Error("Unauthorized access!");
+        return next(new AppError("Unauthorized access!", 403));
     }
 
     if (!req.headers["x-api-gateway-signature"] || req.headers["x-api-gateway-signature"].trim().length === 0) {
-        throw new Error("Unauthorized access!");
+        return next(new AppError("Unauthorized access!", 403));
     }
     const timestamp = req.headers["x-api-gateway-timestamp"]
     const signature = req.headers["x-api-gateway-signature"]
@@ -23,7 +24,7 @@ export const gatewayMiddleware = async (req: any, res: Response, next: NextFunct
     
     if (validApiKey !== receivedKey) {
         console.log(`Invalid API KEY: Sent: ${receivedKey}`)
-        throw new Error("Unauthorized access!");
+        return next(new AppError("Unauthorized access!", 403));
     }
 
     next()

@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { CONFIGS } from "../common/config.js";
+import { CONFIGS } from "../common/configs";
 
 export function generateSignature(apiKey: string, timestamp: string): string {
     return crypto.createHmac("sha256", apiKey).update(timestamp).digest("hex");
