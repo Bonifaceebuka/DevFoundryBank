@@ -13,16 +13,20 @@ export const logRequest = async(req: any, res: Response, next: NextFunction) => 
 
     await userServiceRequestDoc.create(newRequest)
 
-    const newResponse = {
-        user_id: req?.authId && req?.authId.length > 0 ? req?.authId : null,
-        user_email: req?.authEmail && req?.authEmail.length > 0 ? req?.authEmail : null,
-        url: req.originalUrl,
-        method: req.method,
-        status_code: res.statusCode,
-        data: null,
-    }
+    const originalJson = res.json;
+    res.json = function (data) {
+        const newResponse = {
+            user_id: req?.authId && req?.authId.length > 0 ? req?.authId : null,
+            user_email: req?.authEmail && req?.authEmail.length > 0 ? req?.authEmail : null,
+            url: req.originalUrl,
+            method: req.method,
+            status_code: res.statusCode,
+            data: JSON.stringify(data),
+        }
 
-    await logResponse(newResponse)
+        logResponse(newResponse);
+        return originalJson.call(this, data);
+    };
     next()
 }
 

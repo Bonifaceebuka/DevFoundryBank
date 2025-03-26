@@ -7,15 +7,15 @@ export const gatewayMiddleware = async (req: any, res: Response, next: NextFunct
     const validApiKey = CONFIGS.API_GATEWAY_PUBLIC_KEY as string
 
     if (!req.headers["x-api-gateway-key"] || req.headers["x-api-gateway-key"].trim().length === 0) {
-        throw new AppError("Unauthorized access!", 403);
+        return next(new AppError("Unauthorized access!", 403));
     }
 
     if (!req.headers["x-api-gateway-timestamp"] || req.headers["x-api-gateway-timestamp"].trim().length === 0) {
-        throw new AppError("Unauthorized access!", 403);
+        return next(new AppError("Unauthorized access!", 403));
     }
 
     if (!req.headers["x-api-gateway-signature"] || req.headers["x-api-gateway-signature"].trim().length === 0) {
-        throw new AppError("Unauthorized access!", 403);
+        return next(new AppError("Unauthorized access!", 403));
     }
     const timestamp = req.headers["x-api-gateway-timestamp"]
     const signature = req.headers["x-api-gateway-signature"]
@@ -25,7 +25,7 @@ export const gatewayMiddleware = async (req: any, res: Response, next: NextFunct
     
     if (validApiKey !== receivedKey) {
         console.log(`Invalid API KEY: Sent: ${receivedKey}`)
-        throw new AppError("Unauthorized access!", 403);
+        return next(new AppError("Unauthorized access!", 403));
     }
 
     next()
