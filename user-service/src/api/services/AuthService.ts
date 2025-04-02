@@ -10,6 +10,7 @@ import { EmailVerificationResponseDTO, RegisterUserResponseDTO } from "../dtos/A
 import { AppError } from "../errors/AppError";
 import { MESSAGES } from "../constants/messages";
 import { sendRabbitMQMessage } from "../queues/email/producer";
+import { QUEUE_NAMES } from "../constants/queues";
 
 @Service()
 export default class AuthService {
@@ -24,12 +25,12 @@ export default class AuthService {
     {
         const { email, password } = req;
 
-        const existingUser = await UserRepository.findByEmail(email);
+        // const existingUser = await UserRepository.findByEmail(email);
         let message = null;
-        if (existingUser) {
-            message = MESSAGES.COMMON.EMAIL_EXISTS;
-            throw new AppError(message);
-        }
+        // if (existingUser) {
+        //     message = MESSAGES.COMMON.EMAIL_EXISTS;
+        //     throw new AppError(message);
+        // }
 
         const hashedPassword = await UtilityService.hashString(password);
         const otp = UtilityService.generateRandomString({ length: 6, numericOnly: true });
@@ -37,16 +38,17 @@ export default class AuthService {
         // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         otp; // send otp to user
         // todo:: calculate OTP expriation time and save
-        const queue_name = 'email_verification_queue';
+        const queue_name = QUEUE_NAMES.EMAIL_VERIFICATION.NAME;
         const messageBody = {
             otp,
             email,
-            subject:"Account Activation",
-            email_category:'email_verification'
+            subject: QUEUE_NAMES.EMAIL_VERIFICATION.SUBJECT,
+            email_category: queue_name
         }
+
         await sendRabbitMQMessage(queue_name, messageBody);
 
-        message = "User registration was successful";
+        message = MESSAGES.REGISTRATION.SUCCESSFUL;
         return { itExists: false, user: null, message };
     }
 

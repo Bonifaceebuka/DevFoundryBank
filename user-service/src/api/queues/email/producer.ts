@@ -1,17 +1,19 @@
-import { env } from "../../../env";
-import amqplib from "amqplib"
+import { MAX_UNPROCESSED_QUEUE, rabbitMQChannel } from "../../../config/rabbitmq";
 
 export async function sendRabbitMQMessage(queue_name: string, messageBody: any) {
     try {
-        const connection = await amqplib.connect(env.RABBITMQ.RABBITMQ_URL);
-        const channel = await connection.createChannel();
-        await channel.assertQueue(queue_name, {durable:true});
-        channel.sendToQueue(queue_name, Buffer.from(JSON.stringify(messageBody)),
-    {
-        persistent: true,
-    })
-
-
+        const channel = await rabbitMQChannel();
+        if (channel) {
+            const available_queues = await channel.assertQueue(queue_name, { durable: true });
+            if (available_queues.messageCount > MAX_UNPROCESSED_QUEUE){
+                console.log(`This is your ${available_queues.messageCount}th message which is above ${MAX_UNPROCESSED_QUEUE} message limit`)
+            }else{
+                channel.sendToQueue(queue_name, Buffer.from(JSON.stringify(messageBody)),
+                    {
+                        persistent: true,
+                    })
+            }
+        }
     }
     catch (err) {
         console.log({err})

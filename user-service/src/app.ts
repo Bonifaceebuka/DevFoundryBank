@@ -13,8 +13,8 @@ const logger = new Logger();
     const { app: appInfo } = env;
 
     const app: express.Application = express();
-    app.use(gatewayMiddleware);
     if (!env.isProduction) {
+        app.use(gatewayMiddleware);
         app.use('/swagger/api', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     }
     await expressConfig(app);

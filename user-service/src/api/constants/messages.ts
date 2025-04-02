@@ -3,6 +3,9 @@ export const MESSAGES = {
         "INVALID_LOGIN": "Invalid login credentials",   
         "LOGIN_SUCCESSFUL": "Login was successful"
     },
+    REGISTRATION: {
+        "SUCCESSFUL": "User registration was successful"
+    },
     EMAIL_VERIFICATION:{
         "SUCCESS": "User email was successfully verified",
         "FAILED": "User email verification failed"
@@ -34,10 +37,12 @@ export const MESSAGES = {
     LOGS:{
         "JWT_GENERRATED": "User JWT was generated",
         "USER_SANITIZED": "User object was sanitized"
-    }
+    },
 }
 
 export const dynamic_messages = {
     FETCHED_SUCCESSFULLY: (item_fetched: string) => `${item_fetched} fetched successfully`,
     NOT_FOUND: (item: string) => `${item} not found`,
+    CONNECTION_FAILED: (item: string) => `${item} connection failed`,
+    CONNECTION_SUCCESSFUL: (item: string) => `${item} connection was successful`,
 }
