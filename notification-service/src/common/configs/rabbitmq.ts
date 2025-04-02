@@ -27,4 +27,4 @@ export async function rabbitMQChannel(){
 }
 
 
-export const MAX_UNPROCESSED_QUEUE = 3;
+export const MAX_UNPROCESSED_QUEUE = 300;

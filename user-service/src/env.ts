@@ -70,6 +70,7 @@ export const env = {
         API_KEY_EXPIRES_AT: 24
     },
     RABBITMQ:{
-        RABBITMQ_URL: getOsEnv('RABBITMQ_URL')
+        RABBITMQ_URL: getOsEnv('RABBITMQ_URL'),
+        RABBITMQ_PUBLIC_KEY: getOsEnv('RABBITMQ_PUBLIC_KEY'),
     }
 };

@@ -2,6 +2,8 @@ import { sendEmail } from "../../helpers/mailing";
 import { QUEUE_NAMES } from "../../common/constants/queues";
 import { getEmailTemplate } from "../../common/constants/mail_templates";
 import { MAX_UNPROCESSED_QUEUE, rabbitMQChannel } from "../../common/configs/rabbitmq";
+import { generateSignature } from "../../helpers/security";
+import { CONFIGS } from "../../common/configs";
 
 export async function consumeRabbitMQMessages(){
         try {
@@ -13,20 +15,27 @@ export async function consumeRabbitMQMessages(){
     
                 channel.consume(queue_name, async (msg: any) => {
                     if (msg !== null) {
-                        const receivedMessage = JSON.parse(msg.content.toString())
-                        const {
-                            otp,
-                            email,
-                            subject,
-                            email_category
-                        } = receivedMessage
-    
-                        const template = getEmailTemplate(email_category)
-                        const data = {
-                            otp, email,
+                        const { messageBody, signature, timestamp } = JSON.parse(msg.content.toString())
+                        const rabbitMQKey = CONFIGS.RABBITMQ.RABBITMQ_PUBLIC_KEY;
+                        const decryptedSignature = generateSignature(rabbitMQKey, timestamp);
+                        if (decryptedSignature !== signature) {
+                            console.log(`Invalid SIGNATURE: Sent: ${signature}`)
                         }
-                        await sendEmail(email, subject, template, data)
-                        channel.ack(msg)
+                        else{
+                            const {
+                                otp,
+                                email,
+                                subject,
+                                email_category
+                            } = messageBody
+        
+                            const template = getEmailTemplate(email_category)
+                            const data = {
+                                otp, email,
+                            }
+                            await sendEmail(email, subject, template, data)
+                            channel.ack(msg)
+                        }
                     }
                 }
                 )

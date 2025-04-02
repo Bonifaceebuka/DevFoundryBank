@@ -20,7 +20,7 @@ export const gatewayMiddleware = async (req: any, res: Response, next: NextFunct
     const timestamp = req.headers["x-api-gateway-timestamp"]
     const signature = req.headers["x-api-gateway-signature"]
     const receivedKey = req.headers["x-api-gateway-key"]
-    console.log(await verifySignature(receivedKey, timestamp, signature));
+    await verifySignature(receivedKey, timestamp, signature);
     
     if (validApiKey !== receivedKey) {
         console.log(`Invalid API KEY: Sent: ${receivedKey}`)

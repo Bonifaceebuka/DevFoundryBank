@@ -1,4 +1,6 @@
+import { issueNewSignature } from "../../helpers/security";
 import { MAX_UNPROCESSED_QUEUE, rabbitMQChannel } from "../../../config/rabbitmq";
+import { env } from "../../../env";
 
 export async function sendRabbitMQMessage(queue_name: string, messageBody: any) {
     try {
@@ -8,7 +10,14 @@ export async function sendRabbitMQMessage(queue_name: string, messageBody: any) 
             if (available_queues.messageCount > MAX_UNPROCESSED_QUEUE){
                 console.log(`This is your ${available_queues.messageCount}th message which is above ${MAX_UNPROCESSED_QUEUE} message limit`)
             }else{
-                channel.sendToQueue(queue_name, Buffer.from(JSON.stringify(messageBody)),
+                const { signature, timestamp } = await issueNewSignature(env.RABBITMQ.RABBITMQ_PUBLIC_KEY)
+                
+                const encryptedMessageBody ={
+                    messageBody,
+                    signature,
+                    timestamp
+                }
+                channel.sendToQueue(queue_name, Buffer.from(JSON.stringify(encryptedMessageBody)),
                     {
                         persistent: true,
                     })

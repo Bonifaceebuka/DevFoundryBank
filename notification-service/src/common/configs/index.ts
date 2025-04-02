@@ -15,6 +15,7 @@ enum EnvironmentKeys {
     MAIL_SECURE = 'MAIL_SECURE',
     MAIL_PORT = 'MAIL_PORT',
     RABBITMQ_URL = 'RABBITMQ_URL',
+    RABBITMQ_PUBLIC_KEY ='RABBITMQ_PUBLIC_KEY',
     API_GATEWAY_PUBLIC_KEY = 'API_GATEWAY_PUBLIC_KEY'
 }
 
@@ -45,5 +46,6 @@ export const CONFIGS ={
     },
     RABBITMQ: {
         RABBITMQ_URL: get(EnvironmentKeys.RABBITMQ_URL) || 'amqp://localhost',
+        RABBITMQ_PUBLIC_KEY: get(EnvironmentKeys.RABBITMQ_PUBLIC_KEY)
     }
 }
