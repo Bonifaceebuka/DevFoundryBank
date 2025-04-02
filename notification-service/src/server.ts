@@ -12,7 +12,7 @@ import { readFileSync } from 'fs';
 import { join} from 'path';
 import { RegisterRoutes } from "./swagger/routes/routes";
 import { errorHandlerMiddlware } from './middlewares/errorHandlerMiddleware';
-import { rabbitMQConnection } from './queues/email/consumer';
+import { consumeRabbitMQMessages } from './queues/email/consumer';
 const swaggerDocument = JSON.parse(
     readFileSync(join(process.cwd(), 'src/swagger/swagger.json'), 'utf-8')
 );
@@ -21,9 +21,9 @@ dotenv.config();
 const app = express();
 
 async () => {
-    await rabbitMQConnection;
     await dbConnection;
 }
+consumeRabbitMQMessages().then((res)=>{}).catch((err)=>console.log({err}));
 const corsOptions = {
     origin: "http://localhost:3000",
     allowedHeaders: [
@@ -52,9 +52,9 @@ app.use(logRequest)
 if (CONFIGS.NODE_ENV !== 'prod' && CONFIGS.NODE_ENV !== 'production'){
     app.use('/swagger/api', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 }
-// app.use(gatewayMiddleware)
 app.use(express.json());
 RegisterRoutes(app);
+app.use(gatewayMiddleware)
 app.use(errorHandlerMiddlware as express.ErrorRequestHandler)
 app.listen(CONFIGS.SERVER_PORT, () => {
     console.log(`Notification service is running on port ${CONFIGS.SERVER_PORT}`);

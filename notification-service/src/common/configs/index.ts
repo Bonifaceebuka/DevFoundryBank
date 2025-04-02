@@ -44,6 +44,6 @@ export const CONFIGS ={
         REFRESH_JWT_SECRET: get(EnvironmentKeys.REFRESH_JWT_SECRET)
     },
     RABBITMQ: {
-        RABBITMQ_URL: get(EnvironmentKeys.RABBITMQ_URL),
+        RABBITMQ_URL: get(EnvironmentKeys.RABBITMQ_URL) || 'amqp://localhost',
     }
 }

@@ -40,4 +40,6 @@ export const MESSAGES = {
 export const dynamic_messages = {
     FETCHED_SUCCESSFULLY: (item_fetched: string) => `${item_fetched} fetched successfully`,
     NOT_FOUND: (item: string) => `${item} not found`,
+    CONNECTION_FAILED: (item: string) => `${item} connection failed`,
+    CONNECTION_SUCCESSFUL: (item: string) => `${item} connection was successful`,
 }
