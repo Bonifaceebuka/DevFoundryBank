@@ -22,6 +22,7 @@ var allowOrigins = []
 const gatewayKey = CONFIGS.API_GATEWAY_PUBLIC_KEY as string;
 var userService
 var notificationService
+var authService
 
 switch (activeEnv) {
     case "production":
@@ -30,6 +31,7 @@ switch (activeEnv) {
     case "local":
         userService = `http://localhost:2025/`
         notificationService = `http://localhost:2027/`
+        authService= `http:localhost:2028/`
         break
     default:
         break;
@@ -86,8 +88,8 @@ app.use('/notifications', addNewRequestCredentials, createProxyMiddleware({
     }
 }));
 
-app.use('/', createProxyMiddleware({
-    target: userService, 
+app.use('/auth', addNewRequestCredentials, createProxyMiddleware({
+    target: authService, 
     changeOrigin: true
 }));
 

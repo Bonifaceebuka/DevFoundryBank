@@ -1,5 +1,4 @@
 // @ts-ignore
-import bcrypt from "bcryptjs";
 import Chance from "chance";
 import jwt from "jsonwebtoken"
 import { env } from "../../env"
@@ -13,19 +12,7 @@ const chance = new Chance();
 
 
 export default class UtilityService {
-    public static async hashString(input: string): Promise<string> {
-        if(!input) return "";
 
-        const salt = await bcrypt.genSalt(10);
-        const hashedString = await bcrypt.hash(input, salt);
-
-        return hashedString;
-    }
-
-    public static async compareHash(input: string, hash: string): Promise<boolean> {
-        const isSame = await bcrypt.compare(input, hash);
-        return isSame;
-    }
 
     public static generateRandomString(
         { length = DEFAULT_CHARACTER_LENGTH, 

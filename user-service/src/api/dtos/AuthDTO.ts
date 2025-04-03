@@ -1,5 +1,4 @@
 import { IsOptional, IsString } from "class-validator";
-import CreateUserRequest from "../models/payload/requests/CreateUserRequest";
 import User from "../models/postgres/User";
 import AuthenticateUserRequest from "../models/payload/requests/AuthenticateUserRequest";
 import AuthenticateUserOtp from "../models/payload/requests/AuthenticateUserOtp";
