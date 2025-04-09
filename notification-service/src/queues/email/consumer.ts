@@ -26,12 +26,13 @@ export async function consumeRabbitMQMessages(){
                                 otp,
                                 email,
                                 subject,
+                                verification_link,
                                 email_category
                             } = messageBody
         
                             const template = getEmailTemplate(email_category)
                             const data = {
-                                otp, email,
+                                otp, email, verification_link
                             }
                             await sendEmail(email, subject, template, data)
                             channel.ack(msg)

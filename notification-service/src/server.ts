@@ -13,6 +13,7 @@ import { join} from 'path';
 import { RegisterRoutes } from "./swagger/routes/routes";
 import { errorHandlerMiddlware } from './middlewares/errorHandlerMiddleware';
 import { consumeRabbitMQMessages } from './queues/email/consumer';
+import { corsOptions } from './common/configs/cors';
 const swaggerDocument = JSON.parse(
     readFileSync(join(process.cwd(), 'src/swagger/swagger.json'), 'utf-8')
 );
@@ -24,32 +25,12 @@ async () => {
     await dbConnection;
 }
 consumeRabbitMQMessages().then((res)=>{}).catch((err)=>console.log({err}));
-const corsOptions = {
-    origin: "http://localhost:3000",
-    allowedHeaders: [
-        "Content-Type",
-        "Authorization",
-        "Origin",
-        "Accept",
-        "X-Requested-With",
-        "x-jwt-token",
-        "x-jwt-refresh-token",
-        "Content-Length",
-        "Accept-Language",
-        "Accept-Encoding",
-        "Connection",
-        "Access-Control-Allow-Origin"
-    ],
-    methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
-    credentials: true,
-};
-
 app.use(cors(corsOptions));
 app.use(rateLimitMiddleware)
 app.use(logRequest)
 
 // app.get("/", (req:any, res:any) => res.send(`Notification service is UP!`));
-if (CONFIGS.NODE_ENV !== 'prod' && CONFIGS.NODE_ENV !== 'production'){
+if (CONFIGS.IS_PRODUCTION){
     app.use('/swagger/api', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 }
 app.use(express.json());
