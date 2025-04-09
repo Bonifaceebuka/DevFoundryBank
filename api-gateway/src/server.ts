@@ -10,91 +10,43 @@ import { issueNewSignature } from "./helpers/security.js";
 import { Request, Response, NextFunction } from "express";
 import { rateLimitMiddleware } from "./middlewares/rateLimitMiddleware.js";
 import { errorHandlerMiddlware } from "./middlewares/errorHandlerMiddleware.js";
+import { corsOptions, SERVICES } from "./common/cors.js";
 
 dotenv.config();
 const app = express();
+const serviceRoutes = SERVICES;
 
 async () => {
     await dbConnection;
 }
-const activeEnv = process.env.NODE_ENV;
-var allowOrigins = []
+
 const gatewayKey = CONFIGS.API_GATEWAY_PUBLIC_KEY as string;
-var userService
-var notificationService
-var authService
-
-switch (activeEnv) {
-    case "production":
-
-        break;
-    case "local":
-        userService = `http://localhost:2025/`
-        notificationService = `http://localhost:2027/`
-        authService= `http:localhost:2028/`
-        break
-    default:
-        break;
-}
-
-const corsOptions = {
-    origin: "http://localhost:3000",
-    allowedHeaders: [
-        "Content-Type",
-        "Authorization",
-        "Origin",
-        "Accept",
-        "X-Requested-With",
-        "x-jwt-token",
-        "x-jwt-refresh-token",
-        "Content-Length",
-        "Accept-Language",
-        "Accept-Encoding",
-        "Connection",
-        "Access-Control-Allow-Origin"
-    ],
-    methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
-    credentials: true,
-};
 
 app.use(cors(corsOptions));
 app.use(gatewayMiddleware)
 app.use(rateLimitMiddleware)
 app.use(logRequest)
 
-
 const addNewRequestCredentials = async(req: Request, res: Response, next: NextFunction)=>{
     const { timestamp, signature } = await issueNewSignature(gatewayKey)
     req.headers["x-api-gateway-timestamp"] = timestamp
     req.headers["x-api-gateway-signature"] = signature
     req.headers["x-api-gateway-key"] = gatewayKey
-
     next();
 }
 
-app.use('/user', addNewRequestCredentials, createProxyMiddleware({
-    target: userService, 
-    changeOrigin: true,
-    pathRewrite: {
-        [`^/user`]: "",
-    }
-}));
-
-app.use('/notifications', addNewRequestCredentials, createProxyMiddleware({
-    target: notificationService,
-    changeOrigin: true,
-    pathRewrite: {
-        [`^/notifications`]: "",
-    }
-}));
-
-app.use('/auth', addNewRequestCredentials, createProxyMiddleware({
-    target: authService, 
-    changeOrigin: true
-}));
+Object.entries(serviceRoutes).forEach(([prefix, config]) => {
+    app.use(`/${prefix}`, addNewRequestCredentials, createProxyMiddleware({
+        target: config.target,
+        changeOrigin: config.changeOrigin,
+        pathRewrite: {
+        [`^/${prefix}`]: config.basePath,
+        },
+    }));
+});
 
 app.use(express.json());
 app.use(errorHandlerMiddlware as express.ErrorRequestHandler)
 app.listen(CONFIGS.SERVER_PORT, () => {
-        console.log(`API GATEWAY is running on port ${CONFIGS.SERVER_PORT}`);
+    console.log(`API GATEWAY is running on port ${CONFIGS.SERVER_PORT}`);
 });
