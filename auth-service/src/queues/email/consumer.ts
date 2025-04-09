@@ -2,7 +2,7 @@
 import { QUEUE_NAMES } from "../../common/constants/queues";
 // import { getEmailTemplate } from "../../common/constants/mail_templates";
 import { MAX_UNPROCESSED_QUEUE, rabbitMQChannel } from "../../common/configs/rabbitmq";
-import { generateSignature } from "../../helpers/security";
+import { generateSignature } from "../../common/helpers/security";
 import { CONFIGS } from "../../common/configs";
 
 export async function consumeRabbitMQMessages(){

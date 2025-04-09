@@ -7,6 +7,51 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"CustomApiResponse": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {},
+					"status_code": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"message",
+					"status_code"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"OnlyEmailDTO": {
+				"properties": {
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SetNewPasswordRequestDTO": {
+				"properties": {
+					"password_reset_token": {
+						"type": "string"
+					},
+					"new_password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"password_reset_token"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"AuthUserDTO": {
 				"properties": {
 					"email": {
@@ -22,6 +67,22 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"EmailVerificationDTO": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"otp": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"otp"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {
@@ -33,16 +94,85 @@
 		}
 	},
 	"info": {
-		"title": "notification_service",
+		"title": "auth_service",
 		"version": "1.0.0",
-		"description": "This is the notification microservice for DevFoundryBankApp",
+		"description": "This is the auth microservice for DevFoundryBankApp",
 		"license": {
 			"name": "ISC"
 		},
 		"contact": {}
 	},
 	"paths": {
-		"/auth/register": {
+		"/password/reset": {
+			"post": {
+				"operationId": "PerformPasswordResetRequest",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CustomApiResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"email": "boniface@developersfoundry.com"
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Password Reset"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/OnlyEmailDTO"
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "SetNewPassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CustomApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Password Reset"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SetNewPasswordRequestDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/register": {
 			"post": {
 				"operationId": "Register",
 				"responses": {
@@ -51,22 +181,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"data": {},
-										"message": {
-											"type": "string"
-										},
-										"status_code": {
-											"type": "number",
-											"format": "double"
-										}
-									},
-									"required": [
-										"data",
-										"message",
-										"status_code"
-									],
-									"type": "object"
+									"$ref": "#/components/schemas/CustomApiResponse"
 								}
 							}
 						}
@@ -88,11 +203,82 @@
 					}
 				}
 			}
+		},
+		"/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CustomApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AuthUserDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/email/verification": {
+			"put": {
+				"operationId": "VerifyEmail",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CustomApiResponse"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"isSuccess": true
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/EmailVerificationDTO"
+							}
+						}
+					}
+				}
+			}
 		}
 	},
 	"servers": [
 		{
-			"url": "http://localhost:2027/"
+			"url": "http://localhost:2028/"
 		}
 	]
 }

@@ -1,7 +1,6 @@
 import { IsEmail, IsNumber, IsString, IsStrongPassword, Min } from "class-validator";
 
-
-export default class CreateUserRequest {
+export class CreateUserRequestDTO {
     @IsString({ message: "First name is required" })
         firstName?: string;
 
@@ -24,4 +23,21 @@ export default class CreateUserRequest {
     @IsNumber({}, { message: "State/LGA selection is not valid" })
     @Min(1, { message: "State/LGA selection is not valid" })
         stateLgaId?: number;
+}
+
+
+export class SetNewPasswordRequestDTO {
+    @IsString({ message: "Password reset token is required" })
+    password_reset_token!: string;
+
+    @IsStrongPassword({ minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1 }, 
+        { 
+            message: "Password should be a minimum of 8 characters, with at least 1 uppercase, 1 lowercase, 1 number and 1 special character" 
+        })
+    password!: string;
+}
+
+export class ValidatePasswordResetTokenDTO {
+    @IsString({ message: "Password reset token is required" })
+    password_reset_token!: string;
 }

@@ -1,11 +1,15 @@
 import { Service } from "typedi";
 import { Logger } from "../common/configs/logger";
-import { AuthUserDataDTO, AuthUserDTO, RegisterUserResponseDTO } from "../dto/AuthDTO";
+import EmailVerificationDTO, { AuthUserDTO, EmailVerificationResponseDTO, RegisterUserResponseDTO } from "../dto/AuthDTO";
 import { MESSAGES } from "../common/constants/messages";
 import { AppError } from "../common/errors/AppError";
-import { generateRandomString, hashString } from "../helpers/utils";
+import { compareHash, generateJWT, generateRandomString, generateUUID, hasExpired, hashString } from "../common/helpers/utils";
 import { QUEUE_NAMES } from "../common/constants/queues";
 import { UserRepository } from "../repositories/UserRepository";
+import { sendRabbitMQMessage } from "../queues/email/producer";
+import { AccountStatus, IUser } from "../models/User";
+import { CONFIGS } from "../common/configs";
+import moment from "moment";
 
 @Service()
 export default class AuthService {
@@ -31,82 +35,75 @@ export default class AuthService {
 
         const hashedPassword = await hashString(password);
         const otp = generateRandomString({ length: 6, numericOnly: true });
-        // const createdUser = await UserRepository.add({ ...req, otp, password: hashedPassword });
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        otp; // send otp to user
-        // todo:: calculate OTP expriation time and save
+        const {uuid, expiresAt} = generateUUID();
+        
+        await this.userRepository.createUser({ email, otp, email_verification_token: uuid, email_verification_expires_at: expiresAt, password: hashedPassword });
+
         const queue_name = QUEUE_NAMES.EMAIL_VERIFICATION.NAME;
+        const verification_link = `${CONFIGS.FRONT_ENDS.WEB}/email/verification/${uuid}`
         const messageBody = {
             otp,
+            verification_link,
             email,
             subject: QUEUE_NAMES.EMAIL_VERIFICATION.SUBJECT,
             email_category: queue_name
         }
 
-        // await sendRabbitMQMessage(queue_name, messageBody);
+        await sendRabbitMQMessage(queue_name, messageBody);
 
         message = MESSAGES.REGISTRATION.SUCCESSFUL;
         return { itExists: false, user: null, message };
     }
 
-    // public async loginUser(req: AuthenticateUserRequest): Promise<{ isSuccess: boolean, message?: string, user?: User|null|undefined, token?: string }> {
-    //     const { email, password } = req;
+    public async loginUser(req: AuthUserDTO): Promise<{ isSuccess: boolean, message?: string, user?: IUser|null|undefined, token?: string }> {
+        const { email, password } = req;
         
-    //     const existingUser = await UserRepository.findByEmail(email);
-    //     if (!existingUser) {
-    //         throw new AppError(MESSAGES.USER.INVALID_CREDENTIALS)
-    //     }
+        const existingUser = await this.userRepository.findUserByEmail(email);
+        if (!existingUser) {
+            throw new AppError(MESSAGES.USER.INVALID_CREDENTIALS)
+        }
 
-    //     const isPasswordCheckOK = await UtilityService.compareHash(password, existingUser.password);
-    //     if (!isPasswordCheckOK) {
-    //         console.log({ existingUser })
-    //         throw new AppError(MESSAGES.USER.INVALID_CREDENTIALS) 
-    //         }
-
-    //     if (!existingUser.isValidated) {
-    //         // resend Otp
-    //         throw new AppError(MESSAGES.USER.INVALID_ACCOUNT);
-    //     }
-
-    //     if (!existingUser.isActive) {
-    //         throw new AppError(MESSAGES.USER.INACTIVE_ACCOUNT);
-    //     }
-
-    //     if (!existingUser.isEnabled) {
-    //         throw new AppError(MESSAGES.USER.DISABLED_ACCOUNT);
-    //     }
+        const isPasswordCheckOK = await compareHash(password, existingUser.password);
+        if (!isPasswordCheckOK) {
+            console.log({ existingUser })
+            throw new AppError(MESSAGES.USER.INVALID_CREDENTIALS) 
+            }
         
-    //     const jwtDetails = UtilityService.generateJWT(existingUser.email, existingUser.id as string);
-    //     this.logger.debug(MESSAGES.LOGS.JWT_GENERRATED)
+        const jwtDetails = generateJWT(existingUser.email, existingUser.id as string);
+        this.logger.debug(MESSAGES.LOGS.JWT_GENERRATED)
 
-    //     const sanitizedUser = UtilityService.sanitizeUserObject(existingUser);
-    //     this.logger.debug(MESSAGES.LOGS.USER_SANITIZED)
-    //     // generate JWT
-    //     return { isSuccess: true, user: sanitizedUser, token: jwtDetails, message: MESSAGES.LOGIN.LOGIN_SUCCESSFUL};
-    // }
+        return { isSuccess: true, user: existingUser, token: jwtDetails, message: MESSAGES.LOGIN.LOGIN_SUCCESSFUL};
+    }
 
-    // public async validateEmail(req: AuthenticateUserOtp): Promise<EmailVerificationResponseDTO> {
-    //     const { email, otp } = req;
+    public async validateEmail(req: EmailVerificationDTO): Promise<EmailVerificationResponseDTO> {
+        const { verification_token, otp } = req;
 
-    //     const user = await UserRepository.findByOtp(otp, email);
-    //     // let message = "Could not validate user as user does not exist";
-    //     if (!user) {
-    //         throw new AppError(MESSAGES.USER.NOT_FOUND, 404) 
-    //     }
+        const user = await this.userRepository.findUserByOtp(otp, verification_token as string);
+        
+        if (!user) {
+            throw new AppError(MESSAGES.USER.NOT_FOUND, 404) 
+        }
 
-    //     // check otp storage to validate sent otp
-    //     // Check if OTP has expired
-
-    //     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    //     email;
-    //     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    //     otp;
-
-    //     await UserRepository.updateByUser(user, { isActive: true, isEnabled: true, isValidated: true });
-
-    //     return {
-    //         isSuccess: true
-    //     };
-    // }
+        // Check if OTP has expired
+        const expectedExpirationDate = user.email_verification_expires_at;
+        const isExpired = hasExpired(expectedExpirationDate);
+        if (isExpired) {
+            throw new AppError(MESSAGES.EMAIL_VERIFICATION.EXPIRED, 400) 
+        }
+        else{
+            const dataSet = {
+                status: AccountStatus.ACTIVE
+            }
+            const verificationData = {
+                id: user.id,
+                verification_token, otp
+            }
+            await this.userRepository.setUserToVerified(verificationData, dataSet);
+            // Send a message to the user service
+            return {
+                isSuccess: true
+            };
+        }
+    }
 
 }

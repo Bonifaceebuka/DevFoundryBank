@@ -30,13 +30,12 @@ export class RegisterUserResponseDTO {
 }
 
 export default class EmailVerificationDTO {
-    @IsString({ message: "Email is required" })
-    email!: string;
+    @IsString({ message: "Verification token is required" })
+    verification_token?: string;
 
     @IsString({ message: "Otp is required" })
     otp!: string;
 }
-
 
 export class LoginUserResponseDTO {
     @IsString()
@@ -58,4 +57,9 @@ export class EmailVerificationResponseDTO {
 
     @IsString()
     message?: string
+}
+
+export class SetNewPasswordRequestDTO {
+    password_reset_token!: string;
+    new_password?: string;
 }

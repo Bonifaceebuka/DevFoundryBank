@@ -5,13 +5,11 @@ export const MESSAGES = {
     },
     EMAIL_VERIFICATION:{
         "SUCCESS": "User email was successfully verified",
-        "FAILED": "User email verification failed"
+        "FAILED": "User email verification failed",
+        "EXPIRED": "Email verification token has expired"
     },
     REGISTRATION: {
         "SUCCESSFUL": "User registration was successful"
-    },
-    PIN:{
-        "ALREADY_EXISTS": "You already have a transaction PIN on your account!",
     },
     USER: {
         "NOT_FOUND": "User account was not found!",

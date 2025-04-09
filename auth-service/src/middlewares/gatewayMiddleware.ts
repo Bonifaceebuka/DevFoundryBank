@@ -1,6 +1,6 @@
 import { Response, NextFunction } from "express";
 import { CONFIGS } from "../common/configs";
-import { verifySignature } from "../helpers/security";
+import { verifySignature } from "../common/helpers/security";
 import { AppError } from "../common/errors/AppError";
 
 export const gatewayMiddleware = async (req: any, res: Response, next: NextFunction) => {
