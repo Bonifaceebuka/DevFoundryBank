@@ -7,8 +7,6 @@ import {  fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 import { WithdrawalAccountController } from './../controllers/WithdrawalAccountController';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { UserController } from './../controllers/UserController';
-// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { PasswordResetController } from './../controllers/PasswordResetController';
 import { expressAuthentication } from './../middlewares/AppMiddleware';
 // @ts-ignore - no great way to install types from subpackage
 import { iocContainer } from './../../ioc';
@@ -27,72 +25,6 @@ const models: TsoaRoute.Models = {
             "message": {"dataType":"string","required":true},
             "data": {"dataType":"any"},
             "status_code": {"dataType":"double","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "StateLGA": {
-        "dataType": "refObject",
-        "properties": {
-            "id": {"dataType":"double"},
-            "state": {"dataType":"string","required":true},
-            "lga": {"dataType":"string","required":true},
-            "createdAt": {"dataType":"string"},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "User": {
-        "dataType": "refObject",
-        "properties": {
-            "id": {"dataType":"string"},
-            "email": {"dataType":"string","required":true},
-            "password": {"dataType":"string","required":true},
-            "firstName": {"dataType":"string","required":true},
-            "lastName": {"dataType":"string","required":true},
-            "address": {"dataType":"string","required":true},
-            "phoneNumber": {"dataType":"string","required":true},
-            "stateLgaId": {"dataType":"double","required":true},
-            "profilePicture": {"dataType":"string"},
-            "tier": {"dataType":"double"},
-            "pin": {"dataType":"string"},
-            "otp": {"dataType":"string"},
-            "password_reset_token": {"dataType":"string"},
-            "token_expires_at": {"dataType":"datetime"},
-            "isValidated": {"dataType":"boolean"},
-            "isActive": {"dataType":"boolean"},
-            "isEnabled": {"dataType":"boolean"},
-            "isDeleted": {"dataType":"boolean"},
-            "createdAt": {"dataType":"string"},
-            "lastUpdatedAt": {"dataType":"datetime"},
-            "deletedAt": {"dataType":"datetime"},
-            "stateLga": {"ref":"StateLGA"},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "FetchProfileResponseDTO": {
-        "dataType": "refObject",
-        "properties": {
-            "user": {"dataType":"union","subSchemas":[{"ref":"User"},{"dataType":"enum","enums":[null]}]},
-            "message": {"dataType":"string"},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "PasswordResetRequestDTO": {
-        "dataType": "refObject",
-        "properties": {
-            "email": {"dataType":"string","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SetNewPasswordRequestDTO": {
-        "dataType": "refObject",
-        "properties": {
-            "password_reset_token": {"dataType":"string","required":true},
-            "new_password": {"dataType":"string"},
         },
         "additionalProperties": false,
     },
@@ -260,21 +192,20 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsUserController_fetchProfile: Record<string, TsoaRoute.ParameterSchema> = {
+        const argsUserController_testIt: Record<string, TsoaRoute.ParameterSchema> = {
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.get('/users',
-            authenticateMiddleware([{"bearerAuth":[]}]),
+        app.get('/',
             ...(fetchMiddlewares<RequestHandler>(UserController)),
-            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.fetchProfile)),
+            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.testIt)),
 
-            async function UserController_fetchProfile(request: ExRequest, response: ExResponse, next: any) {
+            async function UserController_testIt(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_fetchProfile, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsUserController_testIt, request, response });
 
                 const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
 
@@ -284,7 +215,7 @@ export function RegisterRoutes(app: Router) {
                 }
 
               await templateService.apiHandler({
-                methodName: 'fetchProfile',
+                methodName: 'testIt',
                 controller,
                 response,
                 next,
@@ -299,7 +230,7 @@ export function RegisterRoutes(app: Router) {
         const argsUserController_updateProfile: Record<string, TsoaRoute.ParameterSchema> = {
                 req: {"in":"request","name":"req","required":true,"dataType":"object"},
         };
-        app.put('/users',
+        app.put('/',
             authenticateMiddleware([{"bearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(UserController)),
             ...(fetchMiddlewares<RequestHandler>(UserController.prototype.updateProfile)),
@@ -321,76 +252,6 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'updateProfile',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsPasswordResetController_performPasswordResetRequest: Record<string, TsoaRoute.ParameterSchema> = {
-                passwordResetRequest: {"in":"body","name":"passwordResetRequest","required":true,"ref":"PasswordResetRequestDTO"},
-        };
-        app.post('/password/reset',
-            ...(fetchMiddlewares<RequestHandler>(PasswordResetController)),
-            ...(fetchMiddlewares<RequestHandler>(PasswordResetController.prototype.performPasswordResetRequest)),
-
-            async function PasswordResetController_performPasswordResetRequest(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsPasswordResetController_performPasswordResetRequest, request, response });
-
-                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
-
-                const controller: any = await container.get<PasswordResetController>(PasswordResetController);
-                if (typeof controller['setStatus'] === 'function') {
-                controller.setStatus(undefined);
-                }
-
-              await templateService.apiHandler({
-                methodName: 'performPasswordResetRequest',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsPasswordResetController_setNewPassword: Record<string, TsoaRoute.ParameterSchema> = {
-                setNewPassword: {"in":"body","name":"setNewPassword","required":true,"ref":"SetNewPasswordRequestDTO"},
-        };
-        app.put('/password/reset',
-            ...(fetchMiddlewares<RequestHandler>(PasswordResetController)),
-            ...(fetchMiddlewares<RequestHandler>(PasswordResetController.prototype.setNewPassword)),
-
-            async function PasswordResetController_setNewPassword(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsPasswordResetController_setNewPassword, request, response });
-
-                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
-
-                const controller: any = await container.get<PasswordResetController>(PasswordResetController);
-                if (typeof controller['setStatus'] === 'function') {
-                controller.setStatus(undefined);
-                }
-
-              await templateService.apiHandler({
-                methodName: 'setNewPassword',
                 controller,
                 response,
                 next,

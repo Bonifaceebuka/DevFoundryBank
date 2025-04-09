@@ -11,7 +11,7 @@ import { ACTIVITY_TYPES } from "../constants/activity_types";
 
 @Service()
 @Tags("User Profile")
-@Route("users")
+@Route("")
 export class UserController extends Controller {
     private readonly logger: Logger
       constructor(
@@ -23,49 +23,53 @@ export class UserController extends Controller {
         }
 
     @Get("/")
-    @Security("bearerAuth")
-    public async fetchProfile(@Request() req: any): Promise<FetchProfileResponseDTO> {
-        try {
-            const authUserId = req.authId
-            const fetchedUser = await this.userService.getUserInformation(authUserId);
-            let message = MESSAGES.USER.NOT_FOUND;
-            this.logger.info({
-                    activity_type: ACTIVITY_TYPES.USER_PROFILE,
-                    message,
-                    metadata: {
-                        user: {
-                            email: fetchedUser?.email
-                        }
-                    }
-                });
-            if (!fetchedUser) {
-                this.setStatus(404)
-                return errorResponse(message,null,404)
-            }
-            message = MESSAGES.USER.USER_ACCOUNT_FETCHED;
-            this.logger.info({
-                activity_type: ACTIVITY_TYPES.USER_PROFILE,
-                    message,
-                    metadata: {
-                        user: {
-                            email: fetchedUser.email
-                        }
-                    }
-                });
-            this.setStatus(200)
-            return successResponse(message, fetchedUser)
-        } catch (error: any) {
-            this.logger.error({
-                activity_type: ACTIVITY_TYPES.USER_PROFILE,
-                message: error.message,
-                metadata: {
-                    user: {
-                        email: req.body?.email
-                    }
-                }
-            });
-            return serverErrorResponse(MESSAGES.COMMON.INTERNAL_SERVER_ERROR);
-        }
+    // @Security("bearerAuth")
+    public async testIt(@Request() req: any)
+    // : Promise<FetchProfileResponseDTO> 
+    {
+        this.setStatus(200)
+        return successResponse("message", null)
+        // try {
+        //     const authUserId = req.authId
+        //     const fetchedUser = await this.userService.getUserInformation(authUserId);
+        //     let message = MESSAGES.USER.NOT_FOUND;
+        //     this.logger.info({
+        //             activity_type: ACTIVITY_TYPES.USER_PROFILE,
+        //             message,
+        //             metadata: {
+        //                 user: {
+        //                     email: fetchedUser?.email
+        //                 }
+        //             }
+        //         });
+        //     if (!fetchedUser) {
+        //         this.setStatus(404)
+        //         return errorResponse(message,null,404)
+        //     }
+        //     message = MESSAGES.USER.USER_ACCOUNT_FETCHED;
+        //     this.logger.info({
+        //         activity_type: ACTIVITY_TYPES.USER_PROFILE,
+        //             message,
+        //             metadata: {
+        //                 user: {
+        //                     email: fetchedUser.email
+        //                 }
+        //             }
+        //         });
+        //     this.setStatus(200)
+        //     return successResponse(message, fetchedUser)
+        // } catch (error: any) {
+        //     this.logger.error({
+        //         activity_type: ACTIVITY_TYPES.USER_PROFILE,
+        //         message: error.message,
+        //         metadata: {
+        //             user: {
+        //                 email: req.body?.email
+        //             }
+        //         }
+        //     });
+        //     return serverErrorResponse(MESSAGES.COMMON.INTERNAL_SERVER_ERROR);
+        // }
     }
 
     @Security("bearerAuth")

@@ -14,18 +14,12 @@ import { postgresLoader } from "./postgres";
 import { redisLoader } from "./redis";
 // import routes from "../api/routes";
 import { RegisterRoutes } from "../api/routes/routes";
-import { sendRabbitMQMessage } from "../api/queues/email/producer";
+// import { sendRabbitMQMessage } from "../api/queues/email/producer";
 import { consumeRabbitMQMessage } from "../api/queues/email/consumer";
 import { rabbitMQConnection } from "./rabbitmq";
+import { corsOptions } from "./cors";
 
 // const { app: appInfo } = env;
-
-const corsOptions = {
-    origin(origin: any, callback: any) {
-        callback(null, true);
-    },
-    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
 
 const limiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 1 minutes

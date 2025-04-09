@@ -24,159 +24,6 @@
 				],
 				"type": "object",
 				"additionalProperties": false
-			},
-			"StateLGA": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"state": {
-						"type": "string"
-					},
-					"lga": {
-						"type": "string"
-					},
-					"createdAt": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"state",
-					"lga"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"User": {
-				"properties": {
-					"id": {
-						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					},
-					"password": {
-						"type": "string"
-					},
-					"firstName": {
-						"type": "string"
-					},
-					"lastName": {
-						"type": "string"
-					},
-					"address": {
-						"type": "string"
-					},
-					"phoneNumber": {
-						"type": "string"
-					},
-					"stateLgaId": {
-						"type": "number",
-						"format": "double"
-					},
-					"profilePicture": {
-						"type": "string"
-					},
-					"tier": {
-						"type": "number",
-						"format": "double"
-					},
-					"pin": {
-						"type": "string"
-					},
-					"otp": {
-						"type": "string"
-					},
-					"password_reset_token": {
-						"type": "string"
-					},
-					"token_expires_at": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"isValidated": {
-						"type": "boolean"
-					},
-					"isActive": {
-						"type": "boolean"
-					},
-					"isEnabled": {
-						"type": "boolean"
-					},
-					"isDeleted": {
-						"type": "boolean"
-					},
-					"createdAt": {
-						"type": "string"
-					},
-					"lastUpdatedAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"deletedAt": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"stateLga": {
-						"$ref": "#/components/schemas/StateLGA"
-					}
-				},
-				"required": [
-					"email",
-					"password",
-					"firstName",
-					"lastName",
-					"address",
-					"phoneNumber",
-					"stateLgaId"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"FetchProfileResponseDTO": {
-				"properties": {
-					"user": {
-						"allOf": [
-							{
-								"$ref": "#/components/schemas/User"
-							}
-						],
-						"nullable": true
-					},
-					"message": {
-						"type": "string"
-					}
-				},
-				"type": "object",
-				"additionalProperties": false
-			},
-			"PasswordResetRequestDTO": {
-				"properties": {
-					"email": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"email"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SetNewPasswordRequestDTO": {
-				"properties": {
-					"password_reset_token": {
-						"type": "string"
-					},
-					"new_password": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"password_reset_token"
-				],
-				"type": "object",
-				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {
@@ -320,16 +167,31 @@
 				]
 			}
 		},
-		"/users": {
+		"/": {
 			"get": {
-				"operationId": "FetchProfile",
+				"operationId": "TestIt",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/FetchProfileResponseDTO"
+									"properties": {
+										"data": {},
+										"message": {
+											"type": "string"
+										},
+										"status_code": {
+											"type": "number",
+											"format": "double"
+										}
+									},
+									"required": [
+										"data",
+										"message",
+										"status_code"
+									],
+									"type": "object"
 								}
 							}
 						}
@@ -338,11 +200,7 @@
 				"tags": [
 					"User Profile"
 				],
-				"security": [
-					{
-						"bearerAuth": []
-					}
-				],
+				"security": [],
 				"parameters": []
 			},
 			"put": {
@@ -368,75 +226,6 @@
 					}
 				],
 				"parameters": []
-			}
-		},
-		"/password/reset": {
-			"post": {
-				"operationId": "PerformPasswordResetRequest",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/CustomApiResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"email": "boniface@developersfoundry.com"
-										}
-									}
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Password Reset"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/PasswordResetRequestDTO"
-							}
-						}
-					}
-				}
-			},
-			"put": {
-				"operationId": "SetNewPassword",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/CustomApiResponse"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Password Reset"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/SetNewPasswordRequestDTO"
-							}
-						}
-					}
-				}
 			}
 		}
 	},
