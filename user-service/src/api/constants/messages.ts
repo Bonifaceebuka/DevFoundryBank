@@ -5,7 +5,10 @@ export const MESSAGES = {
         "INVALID_ACCOUNT": "User account not validated. Please check your email for further instructions",
         "INACTIVE_ACCOUNT": "User account is inactive. Please contact support",
         "DISABLED_ACCOUNT": "User account is disabled. Please contact support",
-        "USER_ACCOUNT_FETCHED": "User account info was fetched!"
+        "USER_ACCOUNT_FETCHED": "User account info was fetched!",
+        REGISTRATION: {
+            "SUCCESSFUL": "User registration was successful"
+        },
     },
     PIN:{
         "ALREADY_EXISTS": "You already have a transaction PIN on your account!",

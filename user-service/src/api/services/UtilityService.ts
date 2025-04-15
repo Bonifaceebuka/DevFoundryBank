@@ -23,14 +23,14 @@ export default class UtilityService {
         return randomString;
     }
 
-    public static sanitizeUserObject(user: User): User|null {
-        if(!user) return null;
-        else{
-            delete (user as any).password;
-            delete user.pin;
-            delete user.otp;
-        }
+    // public static sanitizeUserObject(user: User): User|null {
+    //     if(!user) return null;
+    //     else{
+    //         delete (user as any).password;
+    //         delete user.pin;
+    //         delete user.otp;
+    //     }
 
-        return user;
-    }
+    //     return user;
+    // }
 }

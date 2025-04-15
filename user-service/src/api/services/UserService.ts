@@ -2,7 +2,7 @@ import { Service } from "typedi";
 
 // import { Logger } from "../../lib/logger";
 import UpdateUserRequest from "../models/payload/requests/UpdateUserRequest";
-import User from "../models/postgres/User";
+import User, { IUser } from "../models/postgres/User";
 import { UserRepository } from "../repositories/UserRepository";
 
 import UtilityService from "./UtilityService";
@@ -10,22 +10,27 @@ import { CreatePinResponseDTO } from "../dtos/UserPinDTO";
 import { UpdateProfileResponseDTO } from "../dtos/UserDTO";
 import { AppError } from "../errors/AppError";
 import { MESSAGES } from "../constants/messages";
+import { Logger } from "../../lib/logger";
+import { ACTIVITY_TYPES } from "../constants/activity_types";
 
 
 @Service()
 export default class UserService {
+    private readonly logger: Logger
     constructor(
-        // private log: Logger
-    ){}
+    ){
+        this.logger = new Logger(UserService.name);
+    }
     
     public async getUserInformation(id: string): Promise<User|null> {
         const existingUser = await UserRepository.findById(id);
         if (!existingUser) return null;
-        const user = UtilityService.sanitizeUserObject(existingUser);
-        return user;
+        // const user = UtilityService.sanitizeUserObject(existingUser);
+        return existingUser;
     }
 
-    public async setPin(id: string, pin: string): Promise<CreatePinResponseDTO> {
+    public async setPin(id: string, pin: string): Promise<CreatePinResponseDTO> 
+    {
         // Password verification
         const user = await UserRepository.findById(id);
         if (!user){
@@ -52,11 +57,30 @@ export default class UserService {
         if (!updatedUser) {
             throw new AppError(MESSAGES.USER.NOT_FOUND, 404); 
         }
-        const user = UtilityService.sanitizeUserObject(updatedUser);
+        // const user = UtilityService.sanitizeUserObject(updatedUser);
     
-        return { isSuccess: true, user };
+        return { isSuccess: true, user: updatedUser };
     }
 
+    public async createNewUser(userData: IUser): Promise<void> {
+      try {
+            const user = {
+                id: userData._id.toString()
+           }
+           await UserRepository.add(user);
+           this.logger.info({
+                activity_type: ACTIVITY_TYPES.USER_REGISTRATION,
+                message: MESSAGES.USER.REGISTRATION.SUCCESSFUL,
+                metadata: {user}
+            });
+      } catch (error: any) {
+        this.logger.error({
+            activity_type: ACTIVITY_TYPES.USER_REGISTRATION,
+            message: error.message,
+            metadata: {}
+        });
+      }
+    }
 
 
 }
