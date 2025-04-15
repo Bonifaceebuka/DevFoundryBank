@@ -6,7 +6,8 @@ export const MESSAGES = {
     EMAIL_VERIFICATION:{
         "SUCCESS": "User email was successfully verified",
         "FAILED": "User email verification failed",
-        "EXPIRED": "Email verification token has expired"
+        "EXPIRED": "Email verification token has expired",
+        "INVALID": "Email Invalid account activation request"
     },
     REGISTRATION: {
         "SUCCESSFUL": "User registration was successful"

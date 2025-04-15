@@ -58,7 +58,7 @@ const models: TsoaRoute.Models = {
     "EmailVerificationDTO": {
         "dataType": "refObject",
         "properties": {
-            "email": {"dataType":"string","required":true},
+            "verification_token": {"dataType":"string"},
             "otp": {"dataType":"string","required":true},
         },
         "additionalProperties": false,
@@ -223,8 +223,9 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAuthController_verifyEmail: Record<string, TsoaRoute.ParameterSchema> = {
                 req: {"in":"body","name":"req","required":true,"ref":"EmailVerificationDTO"},
+                verification_token: {"in":"path","name":"verification_token","required":true,"dataType":"string"},
         };
-        app.put('/email/verification',
+        app.put('/email/verification/:verification_token',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
             ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.verifyEmail)),
 

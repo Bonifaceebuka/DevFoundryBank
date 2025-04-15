@@ -70,7 +70,7 @@
 			},
 			"EmailVerificationDTO": {
 				"properties": {
-					"email": {
+					"verification_token": {
 						"type": "string"
 					},
 					"otp": {
@@ -78,7 +78,6 @@
 					}
 				},
 				"required": [
-					"email",
 					"otp"
 				],
 				"type": "object",
@@ -236,7 +235,7 @@
 				}
 			}
 		},
-		"/email/verification": {
+		"/email/verification/{verification_token}": {
 			"put": {
 				"operationId": "VerifyEmail",
 				"responses": {
@@ -262,7 +261,16 @@
 					"Auth"
 				],
 				"security": [],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "verification_token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {

@@ -6,41 +6,41 @@ import { generateSignature } from "../../common/helpers/security";
 import { CONFIGS } from "../../common/configs";
 
 export async function consumeRabbitMQMessages(){
-        try {
-            const queue_name = QUEUE_NAMES.EMAIL_VERIFICATION.NAME
-            const channel = await rabbitMQChannel();
-            if (channel){
-                await channel.assertQueue(queue_name, { durable: true });
-                channel.prefetch(MAX_UNPROCESSED_QUEUE);
+        // try {
+        //     const queue_name = QUEUE_NAMES.EMAIL_VERIFICATION.NAME
+        //     const channel = await rabbitMQChannel();
+        //     if (channel){
+        //         await channel.assertQueue(queue_name, { durable: true });
+        //         channel.prefetch(MAX_UNPROCESSED_QUEUE);
     
-                channel.consume(queue_name, async (msg: any) => {
-                    if (msg !== null) {
-                        const { messageBody, signature, timestamp } = JSON.parse(msg.content.toString())
-                        const rabbitMQKey = CONFIGS.RABBITMQ.RABBITMQ_PUBLIC_KEY;
-                        const decryptedSignature = generateSignature(rabbitMQKey, timestamp);
-                        if (decryptedSignature !== signature) {
-                            console.log(`Invalid SIGNATURE: Sent: ${signature}`)
-                        }
-                        else{
-                            const {
-                                otp,
-                                email,
-                                subject,
-                                email_category
-                            } = messageBody
+        //         channel.consume(queue_name, async (msg: any) => {
+        //             if (msg !== null) {
+        //                 const { messageBody, signature, timestamp } = JSON.parse(msg.content.toString())
+        //                 const rabbitMQKey = CONFIGS.RABBITMQ.RABBITMQ_PUBLIC_KEY;
+        //                 const decryptedSignature = generateSignature(rabbitMQKey, timestamp);
+        //                 if (decryptedSignature !== signature) {
+        //                     console.log(`Invalid SIGNATURE: Sent: ${signature}`)
+        //                 }
+        //                 else{
+        //                     const {
+        //                         otp,
+        //                         email,
+        //                         subject,
+        //                         email_category
+        //                     } = messageBody
         
-                            // const template = getEmailTemplate(email_category)
-                            // const data = {
-                            //     otp, email,
-                            // }
-                            // // await sendEmail(email, subject, template, data)
-                            // channel.ack(msg)
-                        }
-                    }
-                }
-                )
-            }
-        } catch (error) {
-            console.log(`❌  Error comsuming messages >> ${error}`);
-        }
+        //                     // const template = getEmailTemplate(email_category)
+        //                     // const data = {
+        //                     //     otp, email,
+        //                     // }
+        //                     // // await sendEmail(email, subject, template, data)
+        //                     // channel.ack(msg)
+        //                 }
+        //             }
+        //         }
+        //         )
+        //     }
+        // } catch (error) {
+        //     console.log(`❌  Error comsuming messages >> ${error}`);
+        // }
     }

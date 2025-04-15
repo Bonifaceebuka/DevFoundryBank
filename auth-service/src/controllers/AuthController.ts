@@ -93,7 +93,7 @@ export class AuthController extends Controller {
             const user = await this.authService.validateEmail(verificationData);
             let message = null;
             if (user.isSuccess) {
-                message = MESSAGES.EMAIL_VERIFICATION.FAILED;
+                message = MESSAGES.EMAIL_VERIFICATION.SUCCESS;
                 this.logger.info({
                     activity_type: ACTIVITY_TYPES.USER_EMAIL_VERIFICATION,
                     message,
@@ -107,9 +107,11 @@ export class AuthController extends Controller {
                 this.setStatus(200)
                 return successResponse(MESSAGES.EMAIL_VERIFICATION.SUCCESS, user.isSuccess);
             }
-            message = "User email verification failed";
-            this.setStatus(400)
-            return errorResponse(message, user.isSuccess);
+            else{
+                message = MESSAGES.EMAIL_VERIFICATION.FAILED;
+                this.setStatus(400)
+                return errorResponse(message, user.isSuccess);
+            }
 
         } catch (error: any) {
             this.logger.error({

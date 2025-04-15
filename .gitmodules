@@ -1,0 +1,3 @@
+[submodule "shared-commons"]
+	path = shared-commons
+	url = https://github.com/Bonifaceebuka/shared.git

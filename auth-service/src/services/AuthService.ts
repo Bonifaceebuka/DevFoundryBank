@@ -40,7 +40,7 @@ export default class AuthService {
         await this.userRepository.createUser({ email, otp, email_verification_token: uuid, email_verification_expires_at: expiresAt, password: hashedPassword });
 
         const queue_name = QUEUE_NAMES.EMAIL_VERIFICATION.NAME;
-        const verification_link = `${CONFIGS.FRONT_ENDS.WEB}/email/verification/${uuid}`
+        const verification_link = `${CONFIGS.FRONT_ENDS.WEB}/auth/email/verification/${uuid}`
         const messageBody = {
             otp,
             verification_link,
@@ -68,7 +68,9 @@ export default class AuthService {
             console.log({ existingUser })
             throw new AppError(MESSAGES.USER.INVALID_CREDENTIALS) 
             }
-        
+        if(existingUser.status !== AccountStatus.ACTIVE || existingUser.verified_at === null){
+            throw new AppError(MESSAGES.USER.INACTIVE_ACCOUNT) 
+        }
         const jwtDetails = generateJWT(existingUser.email, existingUser.id as string);
         this.logger.debug(MESSAGES.LOGS.JWT_GENERRATED)
 
@@ -79,9 +81,8 @@ export default class AuthService {
         const { verification_token, otp } = req;
 
         const user = await this.userRepository.findUserByOtp(otp, verification_token as string);
-        
         if (!user) {
-            throw new AppError(MESSAGES.USER.NOT_FOUND, 404) 
+            throw new AppError(MESSAGES.EMAIL_VERIFICATION.INVALID, 404) 
         }
 
         // Check if OTP has expired
@@ -91,15 +92,17 @@ export default class AuthService {
             throw new AppError(MESSAGES.EMAIL_VERIFICATION.EXPIRED, 400) 
         }
         else{
-            const dataSet = {
-                status: AccountStatus.ACTIVE
-            }
             const verificationData = {
                 id: user.id,
                 verification_token, otp
             }
-            await this.userRepository.setUserToVerified(verificationData, dataSet);
+            await this.userRepository.setUserToVerified(verificationData);
             // Send a message to the user service
+            const queue_name = QUEUE_NAMES.NEW_REGISTRATION.NAME;
+            const messageBody = {
+                user
+            }
+            await sendRabbitMQMessage(queue_name, messageBody);
             return {
                 isSuccess: true
             };

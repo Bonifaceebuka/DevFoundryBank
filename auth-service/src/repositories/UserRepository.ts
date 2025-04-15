@@ -1,5 +1,6 @@
 import { Service } from "typedi";
-import { UserModel, IUser } from "../models/User";
+import { UserModel, IUser, AccountStatus } from "../models/User";
+import moment from "moment";
 
 @Service()
 export class UserRepository {
@@ -17,16 +18,18 @@ export class UserRepository {
     }
 
     async findUserByEmail(email: string): Promise<IUser | null> {
-        return await UserModel.findOne({ email });
+        return await UserModel.findOne({ email });//.select('id email status');
     }
 
     async findUserByOtp(otp: string, verification_token: string): Promise<IUser | null> {
-        return await UserModel.findOne({ otp, verification_token });
+        return await UserModel.findOne({ otp, email_verification_token: verification_token });
     }
 
-    async setUserToVerified(setUserToVerified: any, dataSet: Partial<IUser>) {
+    async setUserToVerified(setUserToVerified: any) {
         const { id, verification_token, otp } = setUserToVerified;
 
-        return await UserModel.updateOne({id, verification_token, otp}, dataSet, { new: true });
+        return await UserModel.updateOne({_id: id, email_verification_token: verification_token, otp}, 
+            { $set: {status: AccountStatus.ACTIVE, verified_at: moment()}}, 
+            { new: true });
     }
 }
