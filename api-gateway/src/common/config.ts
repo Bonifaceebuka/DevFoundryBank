@@ -25,5 +25,12 @@ export const CONFIGS ={
     HTTP_METHODS:["GET", "PUT", "POST", "DELETE", "OPTIONS"],
     GATEWAY_COR_ORIGINS: [
         "http://localhost:3000"
-    ]
+    ],
+    JWT:{
+        JWT_SECRET: process.env.JWT_SECRET,
+        STATELESS_EXPIRES_IN: '3600s',
+        REFRESH_JWT_SECRET: process.env.REFRESH_JWT_SECRET,
+        JWT_ISSUER: process.env.JWT_ISSUER
+    },
+
 }

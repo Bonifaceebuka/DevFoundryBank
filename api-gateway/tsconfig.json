@@ -11,7 +11,10 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "strict": true,
-    "noEmit": true
+    "noEmit": true,
+    // "paths": {
+    //   "@shared/*": ["shared-commons/src/*"]
+    // }
   },
   "include": [
     "src/**/*",
