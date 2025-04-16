@@ -33,7 +33,7 @@ export const gatewayMiddleware = async (req: any, res: Response, next: NextFunct
         const token = req.headers.authorization.split(" ")[1];
         jwt.verify(token, CONFIGS.JWT.JWT_SECRET as string, (error:any, decoded: any) => {
             if (error || !decoded || !decoded.jwtData) {
-                throw new AppError("Invalid token!");
+                return next(new AppError("Invalid token!"));
             }
             
             // Attach user data to request

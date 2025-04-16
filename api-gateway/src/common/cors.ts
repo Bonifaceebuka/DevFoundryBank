@@ -1,9 +1,7 @@
 import { CONFIGS } from "./config.js";
 
 const activeEnv = CONFIGS.NODE_ENV;
-var userService
-var notificationService
-var authService
+var userService, notificationService, authService, walletService
 
 switch (activeEnv) {
     case "production":
@@ -13,6 +11,7 @@ switch (activeEnv) {
         userService = `http://localhost:2025/`
         notificationService = `http://localhost:2027/`
         authService= `http://localhost:2028/`
+        walletService= `http://localhost:2029/`
         break
     default:
         break;
@@ -32,6 +31,11 @@ export const SERVICES = {
         notification: {
             basePath: '/notifications',
             target: notificationService,
+            changeOrigin: true,
+        },
+        wallet: {
+            basePath: '/wallets',
+            target: walletService,
             changeOrigin: true,
         },
 };
