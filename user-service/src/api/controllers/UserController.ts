@@ -24,49 +24,50 @@ export class UserController extends Controller {
 
     @Get("/")
     @Security("bearerAuth")
-    public async getUserInformation(@Request() req: any): Promise<FetchProfileResponseDTO> 
+    public async getUserInformation(@Request() req: any)
+    // : Promise<FetchProfileResponseDTO> 
     {
-        try {
-            const authUserId = req.authId
-            const fetchedUser = await this.userService.getUserInformation(authUserId);
-            let message = MESSAGES.USER.NOT_FOUND;
-            this.logger.info({
-                    activity_type: ACTIVITY_TYPES.USER_PROFILE,
-                    message,
-                    metadata: {
-                        user: {
-                            id: fetchedUser?.id
-                        }
-                    }
-                });
-            if (!fetchedUser) {
-                this.setStatus(404)
-                return errorResponse(message,null,404)
-            }
-            message = MESSAGES.USER.USER_ACCOUNT_FETCHED;
-            this.logger.info({
-                activity_type: ACTIVITY_TYPES.USER_PROFILE,
-                    message,
-                    metadata: {
-                        user: {
-                            id: fetchedUser.id
-                        }
-                    }
-                });
-            this.setStatus(200)
-            return successResponse(message, fetchedUser)
-        } catch (error: any) {
-            this.logger.error({
-                activity_type: ACTIVITY_TYPES.USER_PROFILE,
-                message: error.message,
-                metadata: {
-                    user: {
-                        email: req.body?.email
-                    }
-                }
-            });
-            return serverErrorResponse(MESSAGES.COMMON.INTERNAL_SERVER_ERROR);
-        }
+        // try {
+        //     const authUserId = req.authId
+        //     const fetchedUser = await this.userService.getUserInformation(authUserId);
+        //     let message = MESSAGES.USER.NOT_FOUND;
+        //     this.logger.info({
+        //             activity_type: ACTIVITY_TYPES.USER_PROFILE,
+        //             message,
+        //             metadata: {
+        //                 user: {
+        //                     id: fetchedUser?.id
+        //                 }
+        //             }
+        //         });
+        //     if (!fetchedUser) {
+        //         this.setStatus(404)
+        //         return errorResponse(message,null,404)
+        //     }
+        //     message = MESSAGES.USER.USER_ACCOUNT_FETCHED;
+        //     this.logger.info({
+        //         activity_type: ACTIVITY_TYPES.USER_PROFILE,
+        //             message,
+        //             metadata: {
+        //                 user: {
+        //                     id: fetchedUser.id
+        //                 }
+        //             }
+        //         });
+        //     this.setStatus(200)
+        //     return successResponse(message, fetchedUser)
+        // } catch (error: any) {
+        //     this.logger.error({
+        //         activity_type: ACTIVITY_TYPES.USER_PROFILE,
+        //         message: error.message,
+        //         metadata: {
+        //             user: {
+        //                 email: req.body?.email
+        //             }
+        //         }
+        //     });
+        //     return serverErrorResponse(MESSAGES.COMMON.INTERNAL_SERVER_ERROR);
+        // }
     }
 
     @Security("bearerAuth")
@@ -108,7 +109,9 @@ export class UserController extends Controller {
 
     @Put("/")
     @Security("bearerAuth")
-    public async updateProfile(@Request() req: any): Promise<CustomApiResponse> {
+    public async updateProfile(@Request() req: any)
+    : Promise<CustomApiResponse> 
+    {
         try {
             const updatedUser = await this.userService.update(req.authId, req.body);
             const { message, user, isSuccess } = updatedUser;
@@ -118,7 +121,7 @@ export class UserController extends Controller {
                     message,
                     metadata: {
                         user: {
-                            email: updatedUser?.user?.id
+                            email: updatedUser?.user?.user_id
                         }
                     }
                 });
@@ -130,7 +133,7 @@ export class UserController extends Controller {
                     message: updatedUser.message,
                     metadata: {
                         user: {
-                            id: updatedUser?.user?.id
+                            id: updatedUser?.user?.user_id
                         }
                     }
                 });

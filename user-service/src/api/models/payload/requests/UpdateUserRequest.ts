@@ -2,13 +2,13 @@ import { IsNumber, IsOptional, IsString, Min } from "class-validator";
 
 
 export default class UpdateUserRequest {
-    id!: string;
+    user_id!: string;
     
     @IsString({ message: "First name is required" })
-        firstName!: string;
+        first_name!: string;
 
     @IsString({ message: "Last name is required" })
-        lastName!: string;
+        last_name!: string;
 
     @IsString({ message: "Address is required" })
         address!: string;

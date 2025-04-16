@@ -3,4 +3,5 @@ export enum DocumentType {
     VOTERS_CARD = "Voter's Card",
     DRIVERS_LICENSE = "Driver's License",
     NIN = "NIN",
+    BVN = "BVN",
 }

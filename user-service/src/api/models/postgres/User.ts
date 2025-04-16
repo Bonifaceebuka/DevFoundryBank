@@ -1,6 +1,8 @@
-import { Column, CreateDateColumn, Entity, Index, ManyToOne, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, ManyToOne, OneToMany, PrimaryColumn, UpdateDateColumn } from "typeorm";
 
 import StateLGA from "./StateLGA";
+import { BaseModel } from "./base";
+import UserKYCInfomation from "./UserKYCInfomation";
 
 export enum AccountStatus {
     ACTIVE = "active",
@@ -22,17 +24,16 @@ export interface IUser {
     status: AccountStatus;
 }
 
-@Entity({ name: "users" })
-export default class User {
-    @Column({ unique: true })
-    @PrimaryColumn()
-    id!: string;
+@Entity("users")
+export default class User extends BaseModel {
+    @Column({unique: true})
+    user_id!: string;
 
     @Column({ nullable: true })
-    firstName?: string;
+    first_name?: string;
 
     @Column({ nullable: true })
-    lastName?: string;
+    last_name?: string;
 
     @Column({nullable: true})
     address?: string;
@@ -40,28 +41,10 @@ export default class User {
     @Column({ nullable: true })
     phoneNumber?: string;
 
-    // @Column({ type: "integer", nullable: true })
-    //     stateLgaId!: number;
-
-    // @Column({ nullable: true })
-    //     profilePicture?: string;
-
-    // @Column({ type: "integer", default: 1 })
-    // @Index()
-    //     tier?: number;
-
     @Column({ nullable: true })
     pin?: string;
 
-    // @CreateDateColumn()
-    // @Index()
-    //     createdAt?: string;
+    @OneToMany(() => UserKYCInfomation, (kyc)=>kyc.user_id)
+    kyc?: UserKYCInfomation
 
-    // @Column({nullable:true})
-    // deletedAt?: Date;
-
-    // // ======== JOINS =========
-
-    // @ManyToOne(() => StateLGA, (stateLga) => stateLga.id)
-    //     stateLga?: StateLGA;
 }

@@ -40,13 +40,15 @@ export default class UserService {
             throw new AppError(MESSAGES.PIN.ALREADY_EXISTS);
         }
         else{
-            await UserRepository.updateUserPin(user, { pin });
+            // await UserRepository.updateUserPin(user, { pin });
             return { isSuccess: true, message: "Transaction PIN created!" };
         }
 
     }
 
-    public async update(id:string, req: UpdateUserRequest): Promise<UpdateProfileResponseDTO> {
+    public async update(id:string, req: UpdateUserRequest)
+    : Promise<UpdateProfileResponseDTO> 
+    {
        
         const existingUser = await UserRepository.findById(id);
         if(!existingUser) {
@@ -56,9 +58,7 @@ export default class UserService {
         const updatedUser = await UserRepository.updateById(id, { ...req });
         if (!updatedUser) {
             throw new AppError(MESSAGES.USER.NOT_FOUND, 404); 
-        }
-        // const user = UtilityService.sanitizeUserObject(updatedUser);
-    
+        }    
         return { isSuccess: true, user: updatedUser };
     }
 
@@ -67,7 +67,7 @@ export default class UserService {
             const user = {
                 id: userData._id.toString()
            }
-           await UserRepository.add(user);
+        //    await UserRepository.add(user);
            this.logger.info({
                 activity_type: ACTIVITY_TYPES.USER_REGISTRATION,
                 message: MESSAGES.USER.REGISTRATION.SUCCESSFUL,

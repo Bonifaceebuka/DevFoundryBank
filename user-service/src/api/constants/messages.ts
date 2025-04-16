@@ -1,3 +1,5 @@
+import { KYCStatus, KYCTiers } from "../models/postgres/UserKYCInfomation"
+
 export const MESSAGES = {
     USER: {
         "NOT_FOUND": "User account was not found!",
@@ -9,6 +11,9 @@ export const MESSAGES = {
         REGISTRATION: {
             "SUCCESSFUL": "User registration was successful"
         },
+        KYC:{
+            "SUCCESSFUL": "User KYC verification was successful",
+        }
     },
     PIN:{
         "ALREADY_EXISTS": "You already have a transaction PIN on your account!",
@@ -29,4 +34,5 @@ export const dynamic_messages = {
     NOT_FOUND: (item: string) => `${item} not found`,
     CONNECTION_FAILED: (item: string) => `${item} connection failed`,
     CONNECTION_SUCCESSFUL: (item: string) => `${item} connection was successful`,
+    KYC_EXISTS:(current_status: KYCStatus, tier: KYCTiers) => `You have aleady performed ${tier} KYC verification and your KYC status is: ${current_status}`
 }

@@ -4,15 +4,17 @@ import {IsNull, Not} from 'typeorm'
 
 export const UserRepository = dataSource.getRepository(User).extend({
     async add(user: Partial<User>)
-    // : Promise<User> 
+    : Promise<User> 
     {
-        console.log({user})
         return this.save(user);
     },
 
-    async findById(id: string): Promise<User|null> {
+    async findById(id: string)
+    : Promise<User|null> 
+    {
         if (!id) return null;
-        return this.findOne({ where: { id } });
+        const user = await this.findOne({ where: { user_id: id } });
+        return user;
     },
 
     // async findByEmail(email: string): Promise<User|null> {
@@ -36,28 +38,28 @@ export const UserRepository = dataSource.getRepository(User).extend({
         return { ...user, ...updates } as User;
     },
 
-    async updateUserPin(user: User, pin?: Partial<User>): Promise<User|null> {
-        if (!pin) return null;
-        console.log({pin})
-        await this.update({ id: user.id }, pin);
-        return { ...user } as User;
-    },
+    // async updateUserPin(user: User, pin?: Partial<User>): Promise<User|null> {
+    //     if (!pin) return null;
+    //     console.log({pin})
+    //     await this.update({ id: user.id }, pin);
+    //     return { ...user } as User;
+    // },
 
     async updateById(id: string, updates?: Partial<User>): Promise<User|null> {
         if (!updates) return null;
         const user = await this.findById(id);
 
         if (!user) return null;
-        await this.update({ id }, updates);
+        await this.update({ user_id:id }, updates);
 
         return { ...user, ...updates };
     },
 
-    // async findUserByPin(user_id: string, pin?: string): Promise<User|null> {
-    //     if (pin){
-    //         return this.findOne({ where: { id: user_id, pin } });
-    //     }
+    async findUserByPin(user_id: string, pin?: string): Promise<User|null> {
+        if (pin){
+            return this.findOne({ where: { user_id, pin } });
+        }
 
-    //     return this.findOne({ where: { id: user_id, pin: Not(IsNull()) } });
-    // },
+        return this.findOne({ where: { user_id, pin: Not(IsNull()) } });
+    },
 });

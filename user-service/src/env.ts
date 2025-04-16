@@ -72,5 +72,9 @@ export const env = {
     RABBITMQ:{
         RABBITMQ_URL: getOsEnv('RABBITMQ_URL'),
         RABBITMQ_PUBLIC_KEY: getOsEnv('RABBITMQ_PUBLIC_KEY'),
+    },
+    OKRA:{
+        BASE_URL: getOsEnv('OKRA_URL'),
+        KEY: getOsEnv('OKRA_KEY'),
     }
 };
