@@ -1,0 +1,173 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"CustomApiResponse": {
+				"properties": {
+					"message": {
+						"type": "string"
+					},
+					"data": {},
+					"status_code": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"message",
+					"status_code"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {
+			"bearerAuth": {
+				"type": "apiKey",
+				"name": "Authorization",
+				"in": "header"
+			}
+		}
+	},
+	"info": {
+		"title": "auth_service",
+		"version": "1.0.0",
+		"description": "This is the auth microservice for DevFoundryBankApp",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/withdrawal-accounts": {
+			"post": {
+				"operationId": "CreateNewWithdrawalAccount",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CustomApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Withdrawal Bank Accounts"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": []
+			},
+			"get": {
+				"operationId": "ListWithdrawalAccounts",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CustomApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Withdrawal Bank Accounts"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/withdrawal-accounts/{account_id}": {
+			"delete": {
+				"operationId": "DeleteWithdrawalAccount",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CustomApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Withdrawal Bank Accounts"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "account_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"get": {
+				"operationId": "ShowWithdrawalAccountDetails",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CustomApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Withdrawal Bank Accounts"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "account_id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "http://localhost:2028/"
+		}
+	]
+}
