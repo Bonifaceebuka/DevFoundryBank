@@ -12,6 +12,10 @@ export const MESSAGES = {
     REGISTRATION: {
         "SUCCESSFUL": "User registration was successful"
     },
+    VIRTUAL_ACCOUNT: {
+        "SUCCESSFUL": "User virtual account was successfully created",
+        "FAILED": "User virtual account creation failed",
+    },
     USER: {
         "NOT_FOUND": "User account was not found!",
         "INVALID_CREDENTIALS": "Invalid email or password",

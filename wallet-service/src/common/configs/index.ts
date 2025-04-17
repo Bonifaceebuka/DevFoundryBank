@@ -28,7 +28,7 @@ export function get(key: EnvironmentKeys): string {
 export const CONFIGS ={
     MONGO_DB_URL: get(EnvironmentKeys.MONGODB_URL),
     NODE_ENV: get(EnvironmentKeys.NODE_ENV),
-    APP_NAME:"Notification Service",
+    APP_NAME:"Wallet Service",
     SERVER_PORT: get(EnvironmentKeys.PORT),
     DEFAULT_CHARACTER_LENGTH: 12,
     API_GATEWAY_PUBLIC_KEY: get(EnvironmentKeys.API_GATEWAY_PUBLIC_KEY),

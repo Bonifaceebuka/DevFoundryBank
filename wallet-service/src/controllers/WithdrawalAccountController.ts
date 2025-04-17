@@ -5,8 +5,9 @@ import WithdrawalAccountService from '../services/WithdrawalAccountService';
 import { CustomApiResponse } from '../dto/CommonDTO';
 import { CreateWithdrawalAccountDTO } from '../dto/WithdrawalAccountDTO';
 import { ACTIVITY_TYPES } from '../common/constants/activity_types';
-import { serverErrorResponse, successResponse } from '../common/helpers/responseHandlers';
+import { errorResponse, serverErrorResponse, successResponse } from '../common/helpers/responseHandlers';
 import { dynamic_messages, MESSAGES } from '../common/constants/messages';
+import { AppError } from '../common/errors/AppError';
 @Tags("Withdrawal Bank Accounts")
 @Route("withdrawal-accounts")
 @Service()
@@ -25,15 +26,17 @@ export class WithdrawalAccountController extends Controller {
         try {
             const user_id = req.authId;
             const createAccountData: CreateWithdrawalAccountDTO ={
-                userId: req.userId,
-                bankName: req.bankName,
-                bankCode: req.bankCode,
-                accountNumber: req.accountNumber,
-                accountName: req.accountName,
-                currency: req.currency
+                userId: user_id,
+                bankName: req.body.bankName,
+                bankCode: req.body.bankCode,
+                accountNumber: req.body.accountNumber,
+                accountName: req.body.accountName,
+                currency: req.body.currency
             }
             const newWallet = await this.withdrawalAccountService.addWithdrawalAccount(user_id, createAccountData);
-            const { message, account } = newWallet;
+            const { message
+                , account 
+            } = newWallet;
             this.logger.info({
                 activity_type: ACTIVITY_TYPES.WITHDRAWAL_ACCOUNT.CREATION,
                 message,
@@ -51,13 +54,16 @@ export class WithdrawalAccountController extends Controller {
                     }
                 }
                 this.setStatus(400);
-            return successResponse(message as string)
+            return errorResponse(message as string)
         } catch (error: any) {
                this.logger.error({
                 activity_type: ACTIVITY_TYPES.WITHDRAWAL_ACCOUNT.CREATION,
                 message: error.message,
                 metadata: {}
             });
+            if(error instanceof AppError && error.statusCode && error.statusCode == 400){
+                return errorResponse(error.message);
+            }
                  return serverErrorResponse(MESSAGES.COMMON.INTERNAL_SERVER_ERROR);
             }
     }

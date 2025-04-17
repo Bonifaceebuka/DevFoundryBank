@@ -2,7 +2,9 @@ import { dataSource } from "../common/configs/postgres";
 import UserWithdrawalInformation from "../models/UserWithdrawalInformation";
 
 export const UserWithdrawalInformationRepository = dataSource.getRepository(UserWithdrawalInformation).extend({
-    async add(userId: string, accountDetails: Partial<UserWithdrawalInformation>): Promise<UserWithdrawalInformation> {
+    async add(userId: string, accountDetails: Partial<UserWithdrawalInformation>)
+    : Promise<UserWithdrawalInformation> 
+    {
         const account ={
             ...accountDetails,
             userId

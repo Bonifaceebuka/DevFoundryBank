@@ -35,9 +35,9 @@
 		}
 	},
 	"info": {
-		"title": "auth_service",
+		"title": "wallet_service",
 		"version": "1.0.0",
-		"description": "This is the auth microservice for DevFoundryBankApp",
+		"description": "This is the wallet microservice for DevFoundryBankApp",
 		"license": {
 			"name": "ISC"
 		},
@@ -162,6 +162,47 @@
 						}
 					}
 				]
+			}
+		},
+		"/": {
+			"get": {
+				"operationId": "CreateNewVtWallet",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {},
+										"message": {
+											"type": "string"
+										},
+										"status_code": {
+											"type": "number",
+											"format": "double"
+										}
+									},
+									"required": [
+										"data",
+										"message",
+										"status_code"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Wallets"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": []
 			}
 		}
 	},

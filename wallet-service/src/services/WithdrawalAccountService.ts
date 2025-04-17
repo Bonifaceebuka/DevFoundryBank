@@ -61,7 +61,9 @@ export default class WithdrawalAccountService {
     }
 
     
-    public async addWithdrawalAccount(user_id: string, req: CreateWithdrawalAccountDTO): Promise<CreateWithdrawalAccountResponseDTO> {
+    public async addWithdrawalAccount(user_id: string, req: CreateWithdrawalAccountDTO)
+    : Promise<CreateWithdrawalAccountResponseDTO> 
+    {
         // Api to fetch list of banks
         const accountAlreadyExists = await UserWithdrawalInformationRepository.findByAccountNumber(req.accountNumber);
         if (accountAlreadyExists){

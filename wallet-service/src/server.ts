@@ -35,7 +35,7 @@ app.use(cors(corsOptions));
 app.use(rateLimitMiddleware)
 app.use(logRequest)
 
-app.get("/", (req:any, res:any) => res.send(`Wallet service is UP!`));
+// app.get("/", (req:any, res:any) => res.send(`Wallet service is UP!`));
 if (CONFIGS.NODE_ENV !== 'prod' && CONFIGS.NODE_ENV !== 'production'){
     app.use('/swagger/api', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 }

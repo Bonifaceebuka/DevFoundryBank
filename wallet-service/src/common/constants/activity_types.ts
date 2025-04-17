@@ -10,6 +10,9 @@ export const ACTIVITY_TYPES = {
         }
     },
     USER_EMAIL_VERIFICATION: "Email Verification",
+    USER_VIRTUAL_ACCOUNT: {
+        CREATION: "User virtual account"
+    },
     WITHDRAWAL_ACCOUNT:{
         "CREATION": "Create new withdrawal bank account",
         "DELETE": "Remove withdrawal account",

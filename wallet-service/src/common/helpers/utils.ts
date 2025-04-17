@@ -68,3 +68,8 @@ const chance = new Chance();
         }
         return false
     }
+
+    export function generateBankAccountNumber(){
+        const accountNumber = Math.floor(1000000000 + Math.random() * 9999999999)
+        return accountNumber.toString();
+    }
