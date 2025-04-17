@@ -16,7 +16,7 @@ import axios from "axios";
 import { env } from "../../env";
 import { KycData } from "../dtos/kycDTO";
 import { UserKycRepository } from "../repositories/UserKycRepository";
-import { KYCStatus, KYCTiers } from "../models/postgres/UserKYCInfomation";
+import UserKYCInfomation, { KYCStatus, KYCTiers } from "../models/postgres/UserKYCInfomation";
 import { DocumentType } from "../enums/DocumentType";
 
 
@@ -60,6 +60,18 @@ export default class KycService {
         // await this.bvnVerification(bvn, dob)
         // const user = UtilityService.sanitizeUserObject(existingUser);
         return existingUser;
+    }
+
+    public async getUserKyc(user_id: string): Promise<UserKYCInfomation|null> {
+
+        const existingUser = await UserRepository.findById(user_id);        
+        if (!existingUser) return null;
+
+        const foundUserKyc = await UserKycRepository.findByIdUserId(user_id);        
+        if(foundUserKyc){
+            return foundUserKyc;
+        }
+        throw new AppError(MESSAGES.USER.KYC.NOT_FOUND, 404)
     }
 
     public async bvnVerification(bvn: string, dob: string){

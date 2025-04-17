@@ -15,4 +15,8 @@ export const UserKycRepository = dataSource.getRepository(UserKYCInfomation).ext
     {
         return await this.findOne({where: {user_id, tier}});
     },
+
+    async findByIdUserId(user_id: string){
+        return await this.findOne({where: {user_id}});
+    }
 });

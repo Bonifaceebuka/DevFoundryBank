@@ -13,6 +13,8 @@ export const MESSAGES = {
         },
         KYC:{
             "SUCCESSFUL": "User KYC verification was successful",
+            "NOT_FOUND": "User KYC info was not found!",
+            "FETCHED_SUCCESSFULLY": "User KYC info successfully fetched!",
         }
     },
     PIN:{

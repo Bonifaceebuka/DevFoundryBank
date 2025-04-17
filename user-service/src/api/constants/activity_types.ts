@@ -2,6 +2,7 @@ export const ACTIVITY_TYPES = {
     USER_REGISTRATION: "User registration",
     USER_LOGIN: "User login",
     USER_PROFILE: "Fetch user profile",
+    USER_KYC: "Fetch user kYC",
     USER:{
         PROFILE_UPDATE: "Update user profile",
         PASSWORD_RESET:{

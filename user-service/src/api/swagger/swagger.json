@@ -119,6 +119,23 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"FetchKYCResponseDTO": {
+				"properties": {
+					"kyc": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/UserKYCInfomation"
+							}
+						],
+						"nullable": true
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"User": {
 				"properties": {
 					"id": {
@@ -293,6 +310,30 @@
 		"/kyc": {
 			"post": {
 				"operationId": "Tier1_kyc",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FetchKYCResponseDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User KYC"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": []
+			},
+			"get": {
+				"operationId": "GetUserKyc",
 				"responses": {
 					"200": {
 						"description": "Ok",

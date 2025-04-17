@@ -17,6 +17,7 @@ export const CONFIGS ={
     SERVICES_COR_ORIGINS: [
         "http://localhost:2026", // API Gateway
         "http://localhost:2025", // User service
-        "http://localhost:2027"  // Notification
+        "http://localhost:2027",  // Notification
+        "http://localhost:2029"  // Wallet
     ]
 }

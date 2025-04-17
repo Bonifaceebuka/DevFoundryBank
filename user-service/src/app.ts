@@ -14,10 +14,10 @@ const logger = new Logger();
 
     const app: express.Application = express();
     if (!env.isProduction) {
-        // app.use(gatewayMiddleware);
         app.use('/swagger/api', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     }
     await expressConfig(app);
+    app.use(gatewayMiddleware);
     app.use(errorHandlerMiddlware as express.ErrorRequestHandler)
     app.listen(appInfo.port, () => {
         logger.info(`${appInfo.displayName}, v${appInfo.version} is started on port ${appInfo.port}`);
