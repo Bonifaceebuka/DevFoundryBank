@@ -23,7 +23,7 @@ export class KYCController extends Controller {
           this.logger = new Logger(KYCController.name);
         }
 
-    @Post("/")
+    @Get("/")
     @Security("bearerAuth")
     public async getUserKyc(@Request() req: any)
     : Promise<FetchKYCResponseDTO> 
@@ -77,7 +77,7 @@ export class KYCController extends Controller {
         }
     }
 
-    @Get("/")
+    @Post("/")
     @Security("bearerAuth")
     public async tier1_kyc(@Request() req: any)
     : Promise<FetchProfileResponseDTO> 
