@@ -10,5 +10,8 @@ export const VirtualAccountRepository = dataSource.getRepository(VirtualAccount)
         }
         return this.save(account);
     },
-
+    async findByUserId(user_id: string): Promise<VirtualAccount[]> 
+    {
+        return this.find({where:{user_id}});
+    },
 });

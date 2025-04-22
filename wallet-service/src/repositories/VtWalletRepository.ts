@@ -11,4 +11,8 @@ export const VtWalletRepository = dataSource.getRepository(Wallet).extend({
         return this.save(account);
     },
 
+    async findByUserId(user_id: string): Promise<Wallet[]> 
+    {
+        return this.find({where:{user_id}});
+    },
 });

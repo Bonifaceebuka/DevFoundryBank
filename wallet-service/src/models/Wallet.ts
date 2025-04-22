@@ -14,7 +14,7 @@ export default class Wallet extends BaseModel {
     @Column()
     user_id!: string;
 
-    @Column({type: 'decimal', precision: 10, scale:4, default: 0})
+    @Column({type: 'decimal', precision: 10, scale:2, default: 0})
     balance!: string;
 
     @Column("enum", {enum: WalletStatus, default: WalletStatus.PENDING })

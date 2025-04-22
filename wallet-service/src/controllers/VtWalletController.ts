@@ -11,83 +11,68 @@ import { AppError } from '../common/errors/AppError';
 import axios from 'axios';
 import { CONFIGS } from '../common/configs';
 import { VtWalletRepository } from '../repositories/VtWalletRepository';
-import { WalletStatus } from '../models/Wallet';
-import { generateBankAccountNumber } from '../common/helpers/utils';
-import { VirtualAccountRepository } from '../repositories/VirtualAccountRepository';
+
+import VtWalletService from '../services/VtWalletService';
 @Tags("Wallets")
 @Route("")
 @Service()
 export class VtWalletController extends Controller {
     constructor(
         @Inject(()=> Logger) private readonly logger: Logger,
-        private readonly withdrawalAccountService: WithdrawalAccountService,
+        private readonly vtWalletService: VtWalletService,
     ){
         super()
         this.logger = new Logger(VtWalletController.name);
     }
 
-    @Get("/")
+    @Post("/")
     @Security("bearerAuth")
     public async createNewVtWallet(@Request() req: any)
     : Promise<CustomApiResponse>
     {
         try {
-            const userServiceResponse = await axios.get(`${CONFIGS.SERVICES_COR_ORIGINS[1]}/kyc`,{
-                headers:{
-                    "x-auth_user_email": req.authEmail,
-                    "x-auth_user_id": req.authId
-                }
-            })
-            let message;
-            if (userServiceResponse.data.status_code == 200) {
-                const kyc = userServiceResponse.data.data
-                const {first_name, last_name} = kyc;
-
-                await VtWalletRepository.create({
-                    user_id: req.authId,
-                    status: WalletStatus.ACTIVE
-                })
-            
-                const account_number = generateBankAccountNumber();
-
-                const newBankAccount = await VirtualAccountRepository.create({
-                    user_id: req.authId,
-                    account_name: `${first_name} ${last_name}`,
-                    account_number
-                })
-                this.logger.info({
-                    activity_type: ACTIVITY_TYPES.USER_VIRTUAL_ACCOUNT.CREATION,
-                    message,
-                    metadata: {
-                        account: {
-                            id: newBankAccount?.id
-                        }
-                    }
-                });
-                message = MESSAGES.VIRTUAL_ACCOUNT.SUCCESSFUL
-                this.setStatus(201)
-                return successResponse(message as string, newBankAccount, 201)
-            }
-            else{
-                message = MESSAGES.VIRTUAL_ACCOUNT.FAILED
-                this.logger.info({
-                    activity_type: ACTIVITY_TYPES.USER_VIRTUAL_ACCOUNT.CREATION,
-                    message,
-                    metadata: {
-                        user: {
-                            id: req?.authId
-                        }
-                    }
-                });
-                this.setStatus(400);
-                return errorResponse(message as string)
-            }
+            const walletResponse = await this.vtWalletService.create(req)
+            this.setStatus(200)
+            return successResponse(walletResponse?.message as string, walletResponse?.data, 201);
         } catch (error: any) {
+            console.log({error})
                this.logger.error({
-                activity_type: ACTIVITY_TYPES.WITHDRAWAL_ACCOUNT.CREATION,
+                activity_type: ACTIVITY_TYPES.USER_BANK_ACCOUNT.CREATION,
                 message: error.message,
                 metadata: {}
             });
+            if(error instanceof AppError && error.statusCode && error.statusCode == 400){
+                return errorResponse(error.message);
+            }
+                 return serverErrorResponse(MESSAGES.COMMON.INTERNAL_SERVER_ERROR);
+            }
+    }
+
+    @Get("/")
+    @Security("bearerAuth")
+    public async fetchVtWallets(@Request() req: any)
+    : Promise<CustomApiResponse>
+    {
+        try {
+            let message;
+                const accounts = await VtWalletRepository.findByUserId(req.authId)
+                this.logger.info({
+                    activity_type: ACTIVITY_TYPES.USER_VIRTUAL_WALLET.FETCH,
+                    message,
+                    metadata: {
+                        accounts
+                    }
+                });
+                message = dynamic_messages.FETCHED_SUCCESSFULLY('User vitrual accounts')
+                this.setStatus(200)
+                return successResponse(message as string, accounts, 200);
+        } catch (error: any) {
+               this.logger.error({
+                activity_type: ACTIVITY_TYPES.USER_VIRTUAL_WALLET.FETCH,
+                message: error.message,
+                metadata: {}
+            });
+
             if(error instanceof AppError && error.statusCode && error.statusCode == 400){
                 return errorResponse(error.message);
             }

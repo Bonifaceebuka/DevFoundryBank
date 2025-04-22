@@ -12,9 +12,15 @@ export const MESSAGES = {
     REGISTRATION: {
         "SUCCESSFUL": "User registration was successful"
     },
-    VIRTUAL_ACCOUNT: {
-        "SUCCESSFUL": "User virtual account was successfully created",
-        "FAILED": "User virtual account creation failed",
+    BANK_ACCOUNT: {
+        "SUCCESSFUL": "User bank account was successfully created",
+        "FAILED": "User bank account creation failed",
+        "ALREADY_EXISTS": "You already have a bank account",
+    },
+    VIRTUAL_WALLET: {
+        "SUCCESSFUL": "User virtual wallet was successfully created",
+        "FAILED": "User virtual wallet creation failed",
+        "ALREADY_EXISTS": "You already have a virtual wallet",
     },
     USER: {
         "NOT_FOUND": "User account was not found!",
@@ -47,5 +53,6 @@ export const dynamic_messages = {
     FETCHED_SUCCESSFULLY: (item_fetched: string) => `${item_fetched} fetched successfully`,
     NOT_FOUND: (item: string) => `${item} not found`,
     CONNECTION_FAILED: (item: string) => `${item} connection failed`,
+    ALREADY_EXISTS: (item: string) => `${item} already exists`,
     CONNECTION_SUCCESSFUL: (item: string) => `${item} connection was successful`,
 }
