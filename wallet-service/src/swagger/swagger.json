@@ -165,7 +165,7 @@
 			}
 		},
 		"/": {
-			"get": {
+			"post": {
 				"operationId": "CreateNewVtWallet",
 				"responses": {
 					"200": {
@@ -173,22 +173,31 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"data": {},
-										"message": {
-											"type": "string"
-										},
-										"status_code": {
-											"type": "number",
-											"format": "double"
-										}
-									},
-									"required": [
-										"data",
-										"message",
-										"status_code"
-									],
-									"type": "object"
+									"$ref": "#/components/schemas/CustomApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Wallets"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": []
+			},
+			"get": {
+				"operationId": "FetchVtWallets",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CustomApiResponse"
 								}
 							}
 						}

@@ -308,8 +308,8 @@
 			}
 		},
 		"/kyc": {
-			"post": {
-				"operationId": "Tier1_kyc",
+			"get": {
+				"operationId": "GetUserKyc",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -332,8 +332,8 @@
 				],
 				"parameters": []
 			},
-			"get": {
-				"operationId": "GetUserKyc",
+			"post": {
+				"operationId": "Tier1_kyc",
 				"responses": {
 					"200": {
 						"description": "Ok",
