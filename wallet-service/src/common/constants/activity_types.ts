@@ -18,6 +18,14 @@ export const ACTIVITY_TYPES = {
         CREATION: "User bank account",
         FETCH: "Fetch user bank accounts"
     },
+    TRANSACTION: {
+        CREATION: "New transaction",
+        FETCH: "Fetch user bank accounts"
+    },
+    TRANSFER: {
+        CREATION: "New fund transfer transaction",
+        FETCH: "Fetch user fund transfer transactions"
+    },
     WITHDRAWAL_ACCOUNT:{
         "CREATION": "Create new withdrawal bank account",
         "DELETE": "Remove withdrawal account",
