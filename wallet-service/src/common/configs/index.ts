@@ -40,6 +40,13 @@ export const CONFIGS ={
         REFRESH_JWT_SECRET: get(EnvironmentKeys.REFRESH_JWT_SECRET),
         JWT_ISSUER: get(EnvironmentKeys.JWT_ISSUER)
     },
+    TRANSACTION:{
+        TRANSFER:{
+            MINIMUM: 100,
+            TRANSACTION_FEE: 50
+        },
+        DUPLICATE_TIME_WINDOW: 5
+    },
     DATABASE:{
         HOST: get(EnvironmentKeys.PG_HOST),
         PORT: get(EnvironmentKeys.PG_PORT) as unknown as number,
