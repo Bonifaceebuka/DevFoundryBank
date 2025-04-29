@@ -55,7 +55,7 @@ export class VtWalletController extends Controller {
     {
         try {
             let message;
-                const accounts = await VtWalletRepository.findByUserId(req.authId)
+            const accounts = await VtWalletRepository.findOneByConditions({ user_id: req.authId })
                 this.logger.info({
                     activity_type: ACTIVITY_TYPES.USER_VIRTUAL_WALLET.FETCH,
                     message,
