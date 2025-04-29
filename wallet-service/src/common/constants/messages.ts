@@ -17,6 +17,12 @@ export const MESSAGES = {
         "FAILED": "User bank account creation failed",
         "ALREADY_EXISTS": "You already have a bank account",
     },
+    TRANSACTION: {
+        "SUCCESSFUL": "User bank account was successfully created",
+        "FAILED": "User bank account creation failed",
+        "INSUFFICIENT": "Insufficient fund.",
+        "DUPLICATE": "This might transaction might be a duplicate transaction",
+    },
     VIRTUAL_WALLET: {
         "SUCCESSFUL": "User virtual wallet was successfully created",
         "FAILED": "User virtual wallet creation failed",
@@ -54,5 +60,6 @@ export const dynamic_messages = {
     NOT_FOUND: (item: string) => `${item} not found`,
     CONNECTION_FAILED: (item: string) => `${item} connection failed`,
     ALREADY_EXISTS: (item: string) => `${item} already exists`,
+    MINIMUM:(transaction_type: string, amount: number, minimum: number)=>`You cannot ${transaction_type} ${amount} because it is lower than the permitted minumum amount of ${minimum}`,
     CONNECTION_SUCCESSFUL: (item: string) => `${item} connection was successful`,
 }
