@@ -73,3 +73,9 @@ const chance = new Chance();
         const accountNumber = Math.floor(1000000000 + Math.random() * 9999999999)
         return accountNumber.toString();
     }
+
+    export function refGenerator(name: string){
+        const uniqueString = uuid();
+        const currentTime = moment();
+        return `${name}-${uniqueString}-${currentTime}`
+    }
