@@ -3,8 +3,10 @@ import { Logger } from "../common/configs/logger";
 import { VirtualAccountRepository } from "../repositories/VirtualAccountRepository";
 import { generateBankAccountNumber } from "../common/helpers/utils";
 import { ACTIVITY_TYPES } from "../common/constants/activity_types";
-import { MESSAGES } from "../common/constants/messages";
+import { dynamic_messages, MESSAGES } from "../common/constants/messages";
 import { AppError } from "../common/errors/AppError";
+import Bank from "../models/Bank";
+import BankAccount from "../models/VirtualAccount";
 
 @Service()
 export default class BankAccountService {
@@ -53,4 +55,28 @@ export default class BankAccountService {
             throw new AppError(message, 400)
         }
     }
+
+    public async findOneBankAccount(account_number:string): Promise<BankAccount>{
+        let message = null
+        const conditions = {
+            account_number
+        }
+        const bankAccount = await VirtualAccountRepository.findOneByConditions(conditions);
+        if (!bankAccount) {
+            message = dynamic_messages.NOT_FOUND(`${account_number} bank account`)
+            this.logger.info({
+                activity_type: ACTIVITY_TYPES.USER_BANK_ACCOUNT.CREATION,
+                message,
+                metadata: {
+                    bankAccount: null
+                }
+            });
+            throw new AppError(message, 404)
+        }
+        else{
+            return bankAccount;
+        }
+       
+    }
+
 }
