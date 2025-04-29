@@ -1,12 +1,9 @@
 import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
-import { Currency } from "../common/enums/Currency";
+import { BaseModel } from "./base";
+import { Currency } from "../common/enums";
 
 @Entity({ name: "banks" })
-export default class Bank {
-    @Column()
-    @PrimaryGeneratedColumn()
-        id?: number;
-
+export default class Bank extends BaseModel {
     @Column()
     @Index()
         code!: string;
@@ -22,7 +19,4 @@ export default class Bank {
     })
     @Index()
         currency?: Currency;
-
-    @CreateDateColumn()
-        createdAt?: string;
 }
