@@ -213,6 +213,58 @@
 				],
 				"parameters": []
 			}
+		},
+		"/transactions/transfer": {
+			"post": {
+				"operationId": "FundsTransfer",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CustomApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Transactions"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/transactions": {
+			"get": {
+				"operationId": "FetchVtWallets",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CustomApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Transactions"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": []
+			}
 		}
 	},
 	"servers": [
