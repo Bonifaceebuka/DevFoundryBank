@@ -1,6 +1,5 @@
 import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { Currency } from "../common/enums/Currency";
-
+import { Currency } from "../common/enums";
 @Entity({ name: "users_withdrawal_information" })
 export default class UserWithdrawalInformation {
     @Column()
